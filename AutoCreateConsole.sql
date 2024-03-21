@@ -15,6 +15,7 @@ create table user
 ) comment '账号登陆表';
 
 # 客户个人信息表
+# clientType中0代表个人，1代表单位
 create table client
 (
     clientId int unsigned auto_increment primary key comment '客户id',
@@ -32,13 +33,16 @@ create table vehicle
 (
     vin int primary key comment '车架号',
     license int comment '车牌号',
-    vehicleType tinyint comment '车型',
+    vehicleType varchar(45) comment '车型',
     vehicleColor varchar(30) comment '颜色',
     clientId int unsigned comment '所属客户编号',
+    createTime datetime not null,
+    updateTime datetime not null,
     foreign key (clientId) references client(clientId)
 ) comment '车辆信息表';
 
 # 维修厂员工表
+# 0代表经理/管理员，1代表机修，2代表焊工，3代表漆工，4代表前台，5代表业务员
 create table emp
 (
     empId int unsigned auto_increment primary key comment '员工编号',
@@ -49,6 +53,9 @@ create table emp
 ) comment '维修厂员工表';
 
 # 车辆的故障信息表
+# 维修类型中:0代表普通，1代表加急
+# 作业分类中:0代表大型，1代表中型，2代表小型
+# 结算方式中:0代表自付，1代表三方，2代表索赔
 create table vehicleFault
 (
     vfi int unsigned auto_increment primary key comment 'vehicle fault id',
@@ -56,6 +63,8 @@ create table vehicleFault
     taskClassification tinyint comment '作业分类',
     paymentMethod tinyint comment '结算方式',
     vin int comment '受维修车架号',
+    createTime datetime not null,
+    updateTime datetime not null,
     foreign key (vin) references vehicle(vin)
 ) comment '车辆的故障信息表';
 
@@ -76,7 +85,7 @@ create table repairAuthorization
     createTime datetime comment '创建时间',
     updateTime datetime comment '修改时间',
     estDelivTime datetime comment '预计交付时间',
-    currentRepairStatus int comment '目前维修状态',
+    currentRepairStatus varchar(45) comment '目前维修状态',
     foreign key (clientId) references client(clientId),
     foreign key (vfi) references vehicleFault(vfi),
     foreign key (empId) references emp(empId)
@@ -91,6 +100,8 @@ create table repairtask
     pricePerComponent double comment '零件单价',
     totalComponentPrice double comment '零件总金额',
     rai int unsigned comment '委托书id',
+    createTime datetime not null,
+    updateTime datetime not null,
     foreign key (rai) references repairAuthorization(rai)
 ) comment '维修委托内容';
 
@@ -104,6 +115,24 @@ create table maintenanceDispatchOrder
     empId int unsigned comment '受理维修员编号',
     empType tinyint comment '维修员工种',
     isComplete bool comment '是否完成',
+    createTime datetime not null,
+    updateTime datetime not null,
     foreign key (riid) references repairtask(riid),
     foreign key (empId) references emp(empId)
 ) comment '维修派工单';
+
+# 任务进行记录及历史记录表
+# 任务进行情况中0代表未受理，1代表已受理，2代表已拒绝，3代表已完成，4代表中断受理
+create table onGoingTable
+(
+    ogid int unsigned auto_increment primary key comment '任务进行id',
+    mdoid int unsigned comment '维修派工单id',
+    assignId int unsigned comment '任务分配者id',
+    receiveId int unsigned comment '任务目标者id',
+    status tinyint comment '任务进行情况',
+    createTime datetime comment '创建时间',
+    endTime datetime comment '终止时间',
+    foreign key (mdoid) references maintenanceDispatchOrder(mdoid),
+    foreign key (assignId) references emp(empId),
+    foreign key (receiveId) references emp(empId)
+) comment '任务进行记录及历史记录表';
