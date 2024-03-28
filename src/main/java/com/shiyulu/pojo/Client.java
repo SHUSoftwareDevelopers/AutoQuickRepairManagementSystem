@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class client {
+public class Client {
     @NotNull
     private Integer clientId;
     private String clientName;

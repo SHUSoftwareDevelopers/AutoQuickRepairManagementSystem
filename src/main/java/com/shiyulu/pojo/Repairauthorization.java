@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class repairauthorization {
+public class Repairauthorization {
     private Integer rai;
     private Integer clientId;
     private Integer vfi;

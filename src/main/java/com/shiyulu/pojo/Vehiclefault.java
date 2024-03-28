@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ongoingtable {
-    private Integer ogid;
-    private Integer mdoid;
-    private Integer assignId;
-    private Integer receivedId;
-    private Integer status;
+@NoArgsConstructor
+public class Vehiclefault {
+    private Integer vfi;
+    private Integer maintenanceType;
+    private Integer taskClassification;
+    private Integer paymentMethod;
+    private String vin;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTime;
+    private LocalDateTime updateTime;
 }
