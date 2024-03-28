@@ -31,8 +31,8 @@ create table client
 # 车辆信息
 create table vehicle
 (
-    vin int primary key comment '车架号',
-    license int comment '车牌号',
+    vin char(17) primary key comment '车架号',
+    license varchar(15) comment '车牌号',
     vehicleType varchar(45) comment '车型',
     vehicleColor varchar(30) comment '颜色',
     clientId int unsigned comment '所属客户编号',
@@ -62,7 +62,7 @@ create table vehicleFault
     maintenanceType tinyint comment '维修类型',
     taskClassification tinyint comment '作业分类',
     paymentMethod tinyint comment '结算方式',
-    vin int comment '受维修车架号',
+    vin char(17) comment '受维修车架号',
     createTime datetime not null,
     updateTime datetime not null,
     foreign key (vin) references vehicle(vin)
