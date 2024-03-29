@@ -1,7 +1,6 @@
 package com.shiyulu.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,19 +8,16 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class repairTask {
-    @NotEmpty
-    private Integer riid;
-    private String repairItem;
-    private String needComponent;
-    private Double pricePerComponent;
-    private Double totalComponentPrice;
-    @NotEmpty
-    private Integer rai;
+@AllArgsConstructor
+public class OnGoingTable {
+    private Integer ogid;
+    private Integer mdoid;
+    private Integer assignId;
+    private Integer receivedId;
+    private Integer status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    private LocalDateTime endTime;
 }

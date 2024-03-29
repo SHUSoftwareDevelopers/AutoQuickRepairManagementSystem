@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class vehicleFault {
+public class VehicleFault {
     @NotEmpty
     private Integer vfi;
     private Integer maintenanceType;

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class maintenanceDispatchOrder {
+public class MaintenanceDispatchOrder {
     @NotEmpty
     private Integer mdoid;
     private Double workLength;

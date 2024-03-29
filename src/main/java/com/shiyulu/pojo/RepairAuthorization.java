@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class repairAuthorization {
+public class RepairAuthorization {
     @NotEmpty
     private Integer rai;
     @NotEmpty
