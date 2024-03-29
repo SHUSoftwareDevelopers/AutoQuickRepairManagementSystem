@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Vehiclefault {
+public class VehicleFault {
     private Integer vfi;
     private Integer maintenanceType;
     private Integer taskClassification;
