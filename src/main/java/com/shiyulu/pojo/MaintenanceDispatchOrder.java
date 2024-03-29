@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MaintenancedispatchOrder {
+public class MaintenanceDispatchOrder {
     private Integer mdoid;
     private Double workLength;
     private Double pricePerhour;
