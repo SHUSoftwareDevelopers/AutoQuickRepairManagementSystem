@@ -3,15 +3,14 @@ package com.shiyulu.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.shiyulu.mapper.ClientMapper;
-import com.shiyulu.pojo.Client;
-import com.shiyulu.pojo.PageBean;
-import com.shiyulu.pojo.Vehicle;
-import com.shiyulu.pojo.VehicleFault;
+import com.shiyulu.mapper.CommonMapper;
+import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +20,9 @@ import java.util.stream.Collectors;
 public class ClientServiceImpl implements ClientService {
     @Autowired
     private  ClientMapper clientMapper;
+
+    @Autowired
+    private CommonMapper commonMapper;
 
     //分页查询所有的客户信息
     @Override
@@ -125,5 +127,13 @@ public class ClientServiceImpl implements ClientService {
 
         // 封装结果
         return new PageBean(pageB.getTotal(), pageB.getResult());
+    }
+
+    @Override
+    public void updateInfo(Client client) {
+        User user = commonMapper.findByAccount(client.getAccount());
+        user.setUpdateTime(LocalDateTime.now());
+        commonMapper.updateInfo(user);
+        clientMapper.updateInfo(client);
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public interface CommonService {
     User findByAccount(String account);
 
-    void addUser(String account, String password, String username, Integer usertype);
+    void addUser(String account, String password, String username, String trueName, Integer usertype);
 
     Integer getId(String account, Integer userType);
 

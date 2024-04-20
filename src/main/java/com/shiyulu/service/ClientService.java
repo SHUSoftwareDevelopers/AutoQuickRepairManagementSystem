@@ -19,4 +19,6 @@ public interface ClientService {
     VehicleFault queryVehicleFaultInfoByVFId(Integer vehicleFaultId);
     //根据客户ID分页查询客户的所有维修车辆信息
     public PageBean queryVehicleFaultInfoByClientId(Integer page, Integer pageSize,Integer clientId);
+
+    void updateInfo(Client client);
 }

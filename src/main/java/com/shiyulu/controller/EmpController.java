@@ -6,11 +6,13 @@ import com.shiyulu.pojo.PageBean;
 import com.shiyulu.pojo.Result;
 import com.shiyulu.service.EmpService;
 import com.shiyulu.service.impl.EmpServiceImpl;
+import com.shiyulu.utils.ThreadLocalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -40,6 +42,12 @@ public class EmpController {
         return Result.success();
     }
 
-
+    @GetMapping("/queryInfo")
+    public Result queryInfo(){
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer id = (Integer) map.get("id");
+        Emp emp = empService.queryById(id);
+        return Result.success(emp);
+    }
 
 }

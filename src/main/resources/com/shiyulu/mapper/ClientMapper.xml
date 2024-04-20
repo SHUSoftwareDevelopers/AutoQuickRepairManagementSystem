@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shiyulu.mapper.ClientMapper">
     <select id="selectVehicleFaultInfoByVins" resultType="com.shiyulu.pojo.VehicleFault">
-        SELECT * FROM repaircar.vehiclefault
+        SELECT * FROM vehiclefault
         <where>
             vin IN
             <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
@@ -13,4 +13,22 @@
         </where>
     </select>
 
+    <update id="updateInfo">
+        update client
+        <set>
+            <if test="clientType != null">
+                clientType = #{clientType},
+            </if>
+            <if test="discountRate != null">
+                discountRate = #{discountRate},
+            </if>
+            <if test="businessContact != null and businessContact != ''">
+                businessContact = #{businessContact},
+            </if>
+            <if test="businessTele != null and businessTele != ''">
+                businessTele = #{businessTele}
+            </if>
+        </set>
+        where clientId = #{clientId}
+    </update>
 </mapper>

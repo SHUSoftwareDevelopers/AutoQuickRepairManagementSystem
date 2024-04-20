@@ -37,10 +37,10 @@ public class CommonController {
 
     //注册
     @PostMapping("/register")
-    public Result register(@Pattern(regexp = "^\\S{3,16}$") String account, @Pattern(regexp = "^\\S{5,16}$") String password, String username, Integer usertype){
+    public Result register(@Pattern(regexp = "^\\S{3,16}$") String account, @Pattern(regexp = "^\\S{5,16}$") String password, String username, String trueName, Integer userType){
         User user = commonService.findByAccount(account);
         if(user == null){
-            commonService.addUser(account, password, username, usertype);
+            commonService.addUser(account, password, username, trueName, userType);
             return Result.success();
         }
         return Result.error("该账号已被占用！");
@@ -56,8 +56,9 @@ public class CommonController {
         }
 
         if(Md5Util.getMD5String(password).equals(user.getPassword())){
-           //获得对应的ID 员工/客户ID
+            //获得对应的ID 员工/客户ID
             Integer id = commonService.getId(account,user.getUserType());
+            System.out.println(id);
 
             //构造业务数据
             Map<String, Object> claims = new HashMap<>();

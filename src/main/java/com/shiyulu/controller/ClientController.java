@@ -2,11 +2,14 @@ package com.shiyulu.controller;
 
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
+import com.shiyulu.utils.ThreadLocalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -15,8 +18,8 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    //查询全部的客户信息，主要用于后台展示
-    @GetMapping("/queryInfo")
+    //查询全部的客户信息，主要用于后台展示  ---Wang: 修改了接口路径
+    @GetMapping("/listClient")
     public Result queryAllClientInfo(@RequestParam(defaultValue = "1") Integer page,
                                      @RequestParam(defaultValue = "10") Integer pageSize){
         PageBean clients  = clientService.queryAllClientInfo(page,pageSize);
@@ -25,8 +28,24 @@ public class ClientController {
 
     }
 
+    //Wang: 增加了客户查自己信息的接口
+    @GetMapping("/queryInfo")
+    public Result queryInfo(){
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer clientId = (Integer) map.get("id");
+        Client client  = clientService.queryClientInfoById(clientId);
+        return Result.success(client);
+    }
+
+    //Wang: 增加修改客户信息的接口
+    @PutMapping("updateInfo")
+    public Result updateInfo(@RequestBody @Validated Client client){
+        clientService.updateInfo(client);
+        return Result.success();
+    }
+
     //根据客户ID查询某个客户的信息
-    @GetMapping("/queryInfo/{clientId}")
+    @GetMapping("/queryById/{clientId}")
     public Result queryAllClientInfoById(@PathVariable Integer clientId){
         Client client  = clientService.queryClientInfoById(clientId);
         if(client == null){

@@ -24,21 +24,21 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public void addUser(String account, String password, String username, Integer usertype) {
+    public void addUser(String account, String password, String username, String trueName, Integer usertype) {
         password = Md5Util.getMD5String(password);
         commonMapper.addUser(account, password, username, usertype);
         //根据type像指定的用户表/员工表中添加信息
-        if(usertype == 7){
-            commonMapper.addClient(account);
+        if(usertype == 6){
+            commonMapper.addClient(account, trueName);
         }
         else{
-            commonMapper.addEmp(account,usertype);
+            commonMapper.addEmp(account, usertype, trueName);
         }
     }
 
     @Override
     public Integer getId(String account, Integer userType) {
-        if(userType==7){
+        if(userType==6){
             return commonMapper.getClientId(account);
         }
         else{
