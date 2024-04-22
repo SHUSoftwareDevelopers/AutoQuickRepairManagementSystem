@@ -28,7 +28,7 @@ public class CommonServiceImpl implements CommonService {
         password = Md5Util.getMD5String(password);
         commonMapper.addUser(account, password, username, usertype);
         //根据type像指定的用户表/员工表中添加信息
-        if(usertype == 7){
+        if(usertype == 6){
             commonMapper.addClient(account);
         }
         else{
@@ -38,7 +38,7 @@ public class CommonServiceImpl implements CommonService {
 
     @Override
     public Integer getId(String account, Integer userType) {
-        if(userType==7){
+        if(userType==6){
             return commonMapper.getClientId(account);
         }
         else{
@@ -56,12 +56,13 @@ public class CommonServiceImpl implements CommonService {
     public void updateAvatar(String avatarUrl) {
         Map<String, Object> map = ThreadLocalUtil.get();
         String account = (String) map.get("account");
-
+        commonMapper.updateTime(account,LocalDateTime.now());
         commonMapper.updateAvatar(account,avatarUrl);
     }
 
     @Override
     public void updatePwd(String account, String newPwd) {
+        commonMapper.updateTime(account,LocalDateTime.now());
         commonMapper.updatePwd(account, Md5Util.getMD5String(newPwd));
     }
 }

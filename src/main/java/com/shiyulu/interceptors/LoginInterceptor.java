@@ -24,7 +24,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
@@ -46,10 +45,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             claims = JwtUtil.parseToken(token);
 
         } catch (Exception e) {
+            System.out.println("error");
             response.setStatus(401);
             return false;
         }
-
         //验证@RequireRole中的身份要求是否满足
         if (handler instanceof HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;

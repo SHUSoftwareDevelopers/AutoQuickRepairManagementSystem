@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Emp {
-    @NotEmpty
     private Integer empId;
     private String empName;
     private Integer empType;

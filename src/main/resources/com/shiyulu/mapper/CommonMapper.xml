@@ -22,4 +22,12 @@
         </set>
         where account = #{account}
     </update>
+
+    <update id="updateTime">
+        update user set updateTime = #{updateTime} where account = #{account}
+    </update>
+
+    <update id="updateUserType">
+        update user set userType = #{userType} where account = #{account}
+    </update>
 </mapper>

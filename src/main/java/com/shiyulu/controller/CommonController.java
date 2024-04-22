@@ -114,6 +114,10 @@ public class CommonController {
         Map<String, Object> map = ThreadLocalUtil.get();
         String account = (String) map.get("account");
         User loginUser = commonService.findByAccount(account);
+        if(loginUser == null) {
+            return Result.error("用户不存在！");
+        }
+
         if (!loginUser.getPassword().equals(Md5Util.getMD5String(oldPwd)))
             return Result.error("原密码填写不正确");
 

@@ -1,10 +1,13 @@
 package com.shiyulu.mapper;
 
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import com.shiyulu.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.time.LocalDateTime;
 
 @Mapper
 public interface CommonMapper {
@@ -38,4 +41,7 @@ public interface CommonMapper {
 
     @Update("update user set password=#{md5String} where account=#{account}")
     void updatePwd(String account, String md5String);
+    void updateTime(String account, LocalDateTime updateTime);
+
+    void updateUserType(String account, Integer userType);
 }
