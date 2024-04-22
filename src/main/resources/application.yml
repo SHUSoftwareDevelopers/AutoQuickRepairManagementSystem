@@ -1,13 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-<<<<<<< HEAD
+
     url:
     username:
-=======
-    url: jdbc:mysql://localhost:3306/autoquickrepairdatabase
-    username: root
->>>>>>> f6bfeb0 (员工接口+公共接口)
     password:
   servlet:
     multipart:
