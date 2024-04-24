@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shiyulu.mapper.ClientMapper">
     <select id="selectVehicleFaultInfoByVins" resultType="com.shiyulu.pojo.VehicleFault">
-        SELECT * FROM repaircar.vehiclefault
+        SELECT * FROM vehiclefault
         <where>
             vin IN
             <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
@@ -12,5 +12,28 @@
             </foreach>
         </where>
     </select>
+
+    <!-- 客户自行修改client表中的信息时无法修改折扣率和所属账号    -->
+    <update id="updateClientInfo">
+        update client
+        <set>
+            <if test="clientName != null and clientName != '' ">
+                clientName = #{clientName},
+            </if>
+
+            <if test="clientType != null">
+                clientType = #{clientType},
+            </if>
+
+            <if test="businessContact != null and businessContact != '' ">
+                businessContact = #{businessContact},
+            </if>
+
+            <if test="businessTele != null and businessTele != '' ">
+                businessTele = #{businessTele},
+            </if>
+        </set>
+        where client.account = #{account}
+    </update>
 
 </mapper>

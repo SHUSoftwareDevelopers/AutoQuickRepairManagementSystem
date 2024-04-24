@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiyulu.mapper.FrontDeskMapper">
+    <insert id="addCar">
+        insert into vehicle(vin, license, vehicleType, vehicleColor, clientId, createTime, updateTime)
+        values (#{vin}, #{license}, #{vehicleType}, #{vehicleColor}, #{clientId}, #{createTime}, #{updateTime})
+    </insert>
+
+    <delete id="deleteCar">
+        delete from vehicle where vin = #{vin}
+    </delete>
+
+    <select id="queryCarBelong" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle where clientId = #{clientId} and vin = #{vin}
+    </select>
+
+    <update id="updateCar">
+        update vehicle
+        <set>
+            <if test="license != null and license != '' ">
+                license = #{license},
+            </if>
+
+            <if test="vehicleType != null">
+                vehicleType = #{vehicleType},
+            </if>
+
+            <if test="vehicleColor != null and vehicleColor != '' ">
+                vehicleColor = #{vehicleColor},
+            </if>
+
+            <if test="clientId != null">
+                clientId = #{clientId},
+            </if>
+
+            <if test="updateTime != null">
+                updateTime = #{updateTime}
+            </if>
+        </set>
+        where vehicle.vin = #{vin}
+
+    </update>
+
+    <select id="queryCarByVin" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle where vin = #{vin}
+    </select>
+
+
+    <select id="queryAllClientInfo" resultType="com.shiyulu.pojo.ClientUser">
+        select user.account,user.password,user.userType,user.username,user.avatar,user.email,user.phone,user.createTime,user.updateTime,
+               client.clientId,client.clientName,client.clientType,client.discountRate,client.businessContact,client.businessTele
+        from user inner join client on user.account = client.account
+        <where>
+            <if test = "clientType != null">
+                clientType = #{clientType}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -3,6 +3,7 @@ package com.shiyulu.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.shiyulu.mapper.ClientMapper;
+import com.shiyulu.mapper.CommonMapper;
 import com.shiyulu.pojo.Client;
 import com.shiyulu.pojo.PageBean;
 import com.shiyulu.pojo.Vehicle;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 public class ClientServiceImpl implements ClientService {
     @Autowired
     private  ClientMapper clientMapper;
+    @Autowired
+    private CommonMapper commonMapper;
 
     //分页查询所有的客户信息
     @Override
@@ -99,7 +103,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     //根据维修订单号查询客户车辆信息
     public VehicleFault queryVehicleFaultInfoByVFId(Integer vehicleFaultId){
-        return  clientMapper.selectVehicleFaultInfoByVFId(vehicleFaultId);
+        return clientMapper.selectVehicleFaultInfoByVFId(vehicleFaultId);
     }
 
     //根据客户ID分页查询客户的所有维修车辆信息
@@ -126,4 +130,13 @@ public class ClientServiceImpl implements ClientService {
         // 封装结果
         return new PageBean(pageB.getTotal(), pageB.getResult());
     }
+
+    // 所登录的客户账号更新个人信息
+    @Override
+    public void updateClientInfo(Client client) {
+        // 更新user表的更新时间
+        commonMapper.updateTime(client.getAccount(), LocalDateTime.now());
+        clientMapper.updateClientInfo(client);
+    }
+
 }
