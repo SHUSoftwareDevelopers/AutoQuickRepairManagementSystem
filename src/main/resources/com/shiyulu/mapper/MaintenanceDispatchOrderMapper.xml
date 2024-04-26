@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiyulu.mapper.MaintenanceDispatchOrderMapper">
+    <insert id="addDispatchOrder">
+        insert into maintenancedispatchorder
+        (workLength, pricePerhour, riid, empId, empType, isComplete, createTime, updateTime)
+        values (#{workLength}, #{pricePerhour}, #{riid}, #{empId}, #{empType}, #{isComplete}, #{createTime}, #{updateTime})
+    </insert>
+
+    <select id="getDispatchOrderBymdoId" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
+        select * from maintenancedispatchorder where mdoid = #{mdoId};
+    </select>
+
+    <select id="getDispatchOrderByriid" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
+        select * from maintenancedispatchorder where riid = #{riid};
+    </select>
+
+    <update id="updateDispatchOrder">
+        update maintenancedispatchorder
+        <set>
+            <if test="workLength != null">
+                workLength = #{workLength},
+            </if>
+
+            <if test="pricePerhour != null">
+                pricePerhour = #{pricePerhour},
+            </if>
+
+            <if test="riid != null">
+                riid = #{riid},
+            </if>
+
+            empId = #{empId},
+            empType = #{empType},
+
+            <if test="isComplete != null">
+                isComplete = #{isComplete},
+            </if>
+
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        where mdoid = #{mdoid}
+    </update>
+
+    <delete id="deleteDispatchOrder">
+        delete from maintenancedispatchorder where mdoid = #{mdoid}
+    </delete>
+
+    <select id="queryDispatchOrder" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
+        select * from maintenancedispatchorder
+        <where>
+            <if test="isAssigned == 0">
+                empId is null
+            </if>
+
+            <if test="isAssigned == 1">
+                empId is not null
+            </if>
+        </where>
+    </select>
+
+    <select id="checkIsRepairTaskFinish" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
+        select * from maintenancedispatchorder where riid = #{riid} and isComplete = 0
+    </select>
+
+</mapper>

@@ -36,4 +36,8 @@
         where client.account = #{account}
     </update>
 
+    <select id="queryClientInfoByAccount" resultType="com.shiyulu.pojo.Client">
+        SELECT * FROM client WHERE account = #{account}
+    </select>
+
 </mapper>

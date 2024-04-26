@@ -23,7 +23,7 @@ public class MaintenanceDispatchOrder {
     private Integer empType;
     private Integer isComplete;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime creatTime;
+    private LocalDateTime createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 }

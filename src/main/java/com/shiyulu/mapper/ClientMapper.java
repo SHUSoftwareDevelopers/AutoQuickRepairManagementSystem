@@ -42,4 +42,6 @@ public interface ClientMapper {
     VehicleFault selectVehicleFaultInfoByVFId(Integer vehicleFaultId);
 
     void updateClientInfo(Client client);
+
+    Client queryClientInfoByAccount(String account);
 }

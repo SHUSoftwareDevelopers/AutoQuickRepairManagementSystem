@@ -20,5 +20,8 @@ public interface ClientService {
     //根据客户ID分页查询客户的所有维修车辆信息
     public PageBean queryVehicleFaultInfoByClientId(Integer page, Integer pageSize,Integer clientId);
 
+    // 此时登录的账号更新自己的信息
     void updateClientInfo(Client client);
+    // 根据 account 查询对应客户信息
+    Client queryClientInfoByAccount(String account);
 }

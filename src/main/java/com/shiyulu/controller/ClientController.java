@@ -24,13 +24,15 @@ public class ClientController {
         PageBean clients  = clientService.queryAllClientInfo(page,pageSize);
         log.info("请求成功");
         return Result.success(clients);
-
     }
 
-    //根据客户ID查询某个客户的信息
-    @GetMapping("/queryInfo/{clientId}")
-    public Result queryAllClientInfoById(@PathVariable Integer clientId){
-        Client client  = clientService.queryClientInfoById(clientId);
+    //查询当前登录的客户账号的信息
+    @GetMapping("/queryMyInfo")
+    public Result queryAllClientInfoById(){
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        log.info("账号：{} 查询自身客户信息",account);
+        Client client = clientService.queryClientInfoByAccount(account);
         if(client == null){
             return Result.error("该用户不存在");
         }
@@ -49,19 +51,24 @@ public class ClientController {
     }
 
     //查询全部的客户车辆信息，主要用于后台展示
-    @GetMapping("/findCar")
-    public Result queryAllVehicleInfo(@RequestParam(defaultValue = "1") Integer page,
-                                     @RequestParam(defaultValue = "10") Integer pageSize){
-        PageBean vehicles  = clientService.queryAllVehicleInfo(page,pageSize);
-        return Result.success(vehicles);
-    }
+//    @GetMapping("/findCar")
+//    public Result queryAllVehicleInfo(@RequestParam(defaultValue = "1") Integer page,
+//                                     @RequestParam(defaultValue = "10") Integer pageSize){
+//        PageBean vehicles  = clientService.queryAllVehicleInfo(page,pageSize);
+//        return Result.success(vehicles);
+//    }
 
-    //根据客户ID查询某个客户的车辆信息
-    @GetMapping("/findCar/{clientId}")
+    //查询此时登录账号名下的车辆信息
+    @GetMapping("/findCar")
     public Result queryVehicleInfoByClientId(@RequestParam(defaultValue = "1") Integer page,
-                                             @RequestParam(defaultValue = "10") Integer pageSize,
-                                             @PathVariable Integer clientId){
-        PageBean userVehicles  = clientService.queryVehicleInfoByClientId(page,pageSize,clientId);
+                                             @RequestParam(defaultValue = "10") Integer pageSize){
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        Client client = clientService.queryClientInfoByAccount(account);
+        if(client == null) {
+            return Result.error("该用户不存在");
+        }
+        PageBean userVehicles  = clientService.queryVehicleInfoByClientId(page,pageSize,client.getClientId());
         if(userVehicles == null){
             return Result.error("该客户不存在");
         }

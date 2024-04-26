@@ -6,6 +6,8 @@ import com.shiyulu.mapper.CommonMapper;
 import com.shiyulu.mapper.EmpMapper;
 import com.shiyulu.pojo.Emp;
 import com.shiyulu.pojo.PageBean;
+import com.shiyulu.pojo.Vehicle;
+import com.shiyulu.pojo.VehicleFault;
 import com.shiyulu.service.EmpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class EmpServiceImpl implements EmpService {
         //1. 设置分页参数
         PageHelper.startPage(page,pageSize);
         //2. 执行查询, 此时已经是分页查询结果的封装了
-        List<Emp> empList = empMapper.queryList(page,pageSize,empType);
+        List<Emp> empList = empMapper.queryList(empType);
         Page<Emp> p = (Page<Emp>) empList;
         //3. 封装PageBean对象
         PageBean pageBean = new PageBean(p.getTotal(),p.getResult());
@@ -65,4 +67,10 @@ public class EmpServiceImpl implements EmpService {
         return empMapper.queryMyInfo(account);
     }
 
+    @Override
+    public void addMaintenanceAttorney(VehicleFault vehicleFault) {
+        vehicleFault.setCreateTime(LocalDateTime.now());
+        vehicleFault.setUpdateTime(LocalDateTime.now());
+        empMapper.addMaintenanceAttorney(vehicleFault);
+    }
 }

@@ -2,6 +2,7 @@ package com.shiyulu.service;
 
 import com.shiyulu.pojo.Emp;
 import com.shiyulu.pojo.PageBean;
+import com.shiyulu.pojo.VehicleFault;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface EmpService {
     void addEmp(Emp emp);
 
     Emp queryMyInfo(String account);
+
+    void addMaintenanceAttorney(VehicleFault vehicleFault);
 }

@@ -28,6 +28,7 @@ public class FrontDeskController {
             frontDeskService.addCar(vehicle);
             return Result.success();
         }
+        // 客户车号VIN重复，MySQL自动抛出异常
     }
     // 删除某个客户名下的车辆，注意级联
     @DeleteMapping("/deleteCar")
@@ -53,21 +54,35 @@ public class FrontDeskController {
         }
     }
 
-    // 分页查询全部客户的信息，user表与client表联查
+    // 分页查询全部客户的信息，user表与client表联查，分页参数可以设置客户类型
     @GetMapping("/queryAllClientInfo")
     public Result queryAllClientInfo(@RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(defaultValue = "10") Integer pageSize,
                                     Integer clientType) {
-        log.info("分页查询客户信息，参数为{},{},{}",page,pageSize,clientType);
+        log.info("分页查询所有客户信息，参数为{},{},{}",page,pageSize,clientType);
         PageBean pageBean = frontDeskService.queryAllClientInfo(page,pageSize,clientType);
         return Result.success(pageBean);
     }
 
     // 分页查询指定客户名下的车辆信息
+    @GetMapping("/queryClient_Car")
+    public Result queryClient_Car(@RequestParam(defaultValue = "1") Integer page,
+                                  @RequestParam(defaultValue = "10") Integer pageSize,
+                                  Integer clientId) {
+        log.info("分页查询客户名下的车辆信息，参数为{},{},{}",page,pageSize,clientId);
+        PageBean pageBean = frontDeskService.queryClient_Car(page,pageSize,clientId);
+        return Result.success(pageBean);
+    }
 
-    // 分页查询所有车辆信息，包括车主信息
-
-    // 查询指定车辆的信息
+    // 分页查询所有车辆信息，包括车主信息，分页参数可以设置汽车类型，汽车颜色
+    @GetMapping("/queryAllCarInfo")
+    public Result queryAllCarInfo(@RequestParam(defaultValue = "1") Integer page,
+                                  @RequestParam(defaultValue = "10") Integer pageSize,
+                                  Integer vehicleType, String vehicleColor) {
+        log.info("分页查询所有车辆信息，参数为{},{},{},{}",page,pageSize,vehicleType,vehicleColor);
+        PageBean pageBean = frontDeskService.queryAllCarInfo(page,pageSize,vehicleType,vehicleColor);
+        return Result.success(pageBean);
+    }
 
 
 }

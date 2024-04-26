@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiyulu.mapper.VehicleFaultMapper">
+
+    <insert id="addMaintenanceAttorney">
+        insert into vehiclefault (maintenanceType, taskClassification, paymentMethod, vin, createTime, updateTime)
+        values (#{maintenanceType}, #{taskClassification},#{paymentMethod},#{vin},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateMaintenanceAttorney">
+        update vehiclefault
+        <set>
+            <if test="maintenanceType != null">
+                maintenanceType = #{maintenanceType},
+            </if>
+
+            <if test="taskClassification != null">
+                taskClassification = #{taskClassification},
+            </if>
+
+            <if test="paymentMethod != null">
+                paymentMethod = #{paymentMethod},
+            </if>
+
+            <if test="vin != null and vin != '' ">
+                vin = #{vin},
+            </if>
+
+            <if test="createTime != null">
+                createTime = #{createTime},
+            </if>
+
+            <if test="updateTime != null">
+                updateTime = #{updateTime}
+            </if>
+
+        </set>
+        where vehiclefault.vfi = #{vfi}
+    </update>
+
+    <select id="queryMaintenanceAttorneyByVfi" resultType="com.shiyulu.pojo.VehicleFault">
+        select * from vehiclefault where vfi = #{vfi}
+    </select>
+</mapper>

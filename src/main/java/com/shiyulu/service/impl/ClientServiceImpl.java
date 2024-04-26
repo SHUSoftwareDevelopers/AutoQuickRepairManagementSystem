@@ -139,4 +139,8 @@ public class ClientServiceImpl implements ClientService {
         clientMapper.updateClientInfo(client);
     }
 
+    @Override
+    public Client queryClientInfoByAccount(String account) {
+        return clientMapper.queryClientInfoByAccount(account);
+    }
 }
