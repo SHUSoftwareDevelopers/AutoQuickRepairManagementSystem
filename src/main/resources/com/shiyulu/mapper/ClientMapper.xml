@@ -16,6 +16,9 @@
     <update id="updateInfo">
         update client
         <set>
+            <if test="clientName != null and clientName != ''">
+                clientName = #{clientName},
+            </if>
             <if test="clientType != null">
                 clientType = #{clientType},
             </if>
@@ -31,4 +34,16 @@
         </set>
         where clientId = #{clientId}
     </update>
+
+    <select id="selectAllClientInfo" resultType="com.shiyulu.pojo.Client">
+        select * from client
+        <where>
+            <if test="clientName!=null and clientName!= ''">
+                client.clientName like CONCAT('%', #{clientName}, '%')
+            </if>
+            <if test="clientType!=null">
+                client.clientType = #{clientType}
+            </if>
+        </where>
+    </select>
 </mapper>

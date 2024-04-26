@@ -26,12 +26,12 @@ public class ClientServiceImpl implements ClientService {
 
     //分页查询所有的客户信息
     @Override
-    public PageBean queryAllClientInfo(Integer page, Integer pageSize){
+    public PageBean queryAllClientInfo(Integer page, Integer pageSize, String clientName, Integer clientType){
         //设置分页参数
         PageHelper.startPage(page,pageSize);
 
         //查询结果
-        List<Client> clients = clientMapper.selectAllClientInfo();
+        List<Client> clients = clientMapper.selectAllClientInfo(clientName,clientType);
         log.info("clients:{}",clients);
         //用PageHelper自带的Page类型对查询结果进行强制转型
         Page<Client> p = (Page<Client>) clients;

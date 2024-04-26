@@ -18,7 +18,7 @@ public class AliOSSUtils {
     private String endpoint = "https://oss-cn-beijing.aliyuncs.com";
     private String accessKeyId = "";
     private String accessKeySecret = "";
-    private String bucketName = "car-repair-hh";
+    private String bucketName = "";
 
     /**
      * 实现上传图片到OSS

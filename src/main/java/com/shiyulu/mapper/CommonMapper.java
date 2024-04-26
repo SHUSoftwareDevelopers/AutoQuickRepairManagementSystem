@@ -33,7 +33,7 @@ public interface CommonMapper {
 
     void updateInfo(User user);
 
-    @Update("update user set avatar=#{avatarUrl} where account=#{account}")
+    @Update("update user set avatar=#{avatarUrl},updateTime=now() where account=#{account}")
     void updateAvatar(String account, String avatarUrl);
 
     @Update("update user set password=#{md5String} where account=#{account}")

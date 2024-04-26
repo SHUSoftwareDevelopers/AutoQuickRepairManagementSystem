@@ -1,2 +1,5 @@
-package com.shiyulu.utils;public interface Constants {
+package com.shiyulu.utils;
+
+public interface Constants {
+
 }
