@@ -45,8 +45,8 @@ public class EmpController {
     }
 
     // 员工账号所有者查询自己的信息
-    @GetMapping("/queryMyInfo")
-    public Result queryMyInfo() {
+    @GetMapping("/queryInfo")
+    public Result queryInfo() {
         Map<String, Object> map = ThreadLocalUtil.get();
         String account = (String) map.get("account");
         log.info("查询当前员工账号：{}的信息", account);
@@ -74,6 +74,7 @@ public class EmpController {
         PageBean pageBean = empService.queryList(page,pageSize,empType);
         return Result.success(pageBean);
     }
+
     @PutMapping("/update")
     public Result updateEmp(@RequestBody Emp emp) {
         log.info("更新员工信息：{}", emp);

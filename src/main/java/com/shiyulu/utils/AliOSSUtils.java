@@ -15,10 +15,10 @@ import java.util.UUID;
 @Component
 public class AliOSSUtils {
 
-    private String endpoint = "https://oss-cn-shanghai.aliyuncs.com";
-    private String accessKeyId = "LTAI5tD8s74Sctj6nV6oWKQJ";
-    private String accessKeySecret = "BtrFx6RtMxTEaAOxwGdrJ2kv0CiIU5";
-    private String bucketName = "shiyulu-autoquickrepair";
+    private String endpoint = "https://oss-cn-beijing.aliyuncs.com";
+    private String accessKeyId = "LTAI5tQ2K8ZvruUaNaeMVTfT";
+    private String accessKeySecret = "wtzkge08eB8qfVYwzk31ciapf3JuPP";
+    private String bucketName = "car-repair-hh";
 
     /**
      * 实现上传图片到OSS

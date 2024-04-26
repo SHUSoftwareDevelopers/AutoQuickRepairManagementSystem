@@ -7,7 +7,7 @@ import com.shiyulu.pojo.VehicleFault;
 
 public interface ClientService {
     //分页查询所有的客户信息
-    PageBean queryAllClientInfo(Integer page, Integer pageSize);
+    PageBean queryAllClientInfo(Integer page, Integer pageSize, String clientName, Integer clientType);
     //分页查询所有的客户车辆信息
     Client queryClientInfoById(Integer clientId);
     PageBean queryAllVehicleInfo(Integer page, Integer pageSize);
@@ -20,5 +20,5 @@ public interface ClientService {
     //根据客户ID分页查询客户的所有维修车辆信息
     public PageBean queryVehicleFaultInfoByClientId(Integer page, Integer pageSize,Integer clientId);
 
-    void updateClientInfo(Client client);
+    void updateInfo(Client client);
 }

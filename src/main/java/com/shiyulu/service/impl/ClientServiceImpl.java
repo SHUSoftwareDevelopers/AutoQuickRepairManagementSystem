@@ -4,10 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.shiyulu.mapper.ClientMapper;
 import com.shiyulu.mapper.CommonMapper;
-import com.shiyulu.pojo.Client;
-import com.shiyulu.pojo.PageBean;
-import com.shiyulu.pojo.Vehicle;
-import com.shiyulu.pojo.VehicleFault;
+import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +25,12 @@ public class ClientServiceImpl implements ClientService {
 
     //分页查询所有的客户信息
     @Override
-    public PageBean queryAllClientInfo(Integer page, Integer pageSize){
+    public PageBean queryAllClientInfo(Integer page, Integer pageSize, String clientName, Integer clientType){
         //设置分页参数
         PageHelper.startPage(page,pageSize);
 
         //查询结果
-        List<Client> clients = clientMapper.selectAllClientInfo();
+        List<Client> clients = clientMapper.selectAllClientInfo(clientName,clientType);
         log.info("clients:{}",clients);
         //用PageHelper自带的Page类型对查询结果进行强制转型
         Page<Client> p = (Page<Client>) clients;
@@ -131,12 +128,11 @@ public class ClientServiceImpl implements ClientService {
         return new PageBean(pageB.getTotal(), pageB.getResult());
     }
 
-    // 所登录的客户账号更新个人信息
     @Override
-    public void updateClientInfo(Client client) {
-        // 更新user表的更新时间
-        commonMapper.updateTime(client.getAccount(), LocalDateTime.now());
-        clientMapper.updateClientInfo(client);
+    public void updateInfo(Client client) {
+        User user = commonMapper.findByAccount(client.getAccount());
+        user.setUpdateTime(LocalDateTime.now());
+        commonMapper.updateInfo(user);
+        clientMapper.updateInfo(client);
     }
-
 }
