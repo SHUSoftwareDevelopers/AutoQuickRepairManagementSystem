@@ -2,6 +2,9 @@ package com.shiyulu.controller;
 
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
+import com.shiyulu.service.CommonService;
+import com.shiyulu.service.FrontDeskService;
+import com.shiyulu.service.MaintenanceProgressService;
 import com.shiyulu.utils.ThreadLocalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,12 @@ import java.util.Map;
 public class ClientController {
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private CommonService commonService;
+    @Autowired
+    private FrontDeskService frontDeskService;
+    @Autowired
+    private MaintenanceProgressService maintenanceProgressService;
 
     //查询全部的客户信息，主要用于后台展示
     @GetMapping("/queryInfo")
@@ -58,7 +67,7 @@ public class ClientController {
 //        return Result.success(vehicles);
 //    }
 
-    //查询此时登录账号名下的车辆信息
+    //查询此时**登录账号**名下的车辆信息
     @GetMapping("/findCar")
     public Result queryVehicleInfoByClientId(@RequestParam(defaultValue = "1") Integer page,
                                              @RequestParam(defaultValue = "10") Integer pageSize){
@@ -110,7 +119,44 @@ public class ClientController {
         return Result.success(vehicleFaults);
     }
 
-    // 客户查询自己车辆的维修进度
+    // 此时登录账号的客户分页查询自己车辆的维修信息
+    @GetMapping("/queryMyVehicleFaultInfo")
+    public Result queryMyVehicleFaultInfo(@RequestParam(defaultValue = "1") Integer page,
+                                          @RequestParam(defaultValue = "10") Integer pageSize,
+                                          Integer repairStatus) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        Client client = clientService.queryClientInfoByAccount(account);
+        if(client == null) {
+            log.info("查询的客户账号不存在！");
+            return Result.error("该用户不存在");
+        }
+        PageBean vehicleFaults  = clientService.queryMyVehicleFaultInfo(page,pageSize,client.getClientId(),repairStatus);
+        return Result.success(vehicleFaults);
+    }
 
+    // 客户查询自己车辆的维修进度
+    @GetMapping("/queryMaintenanceProgress")
+    public Result queryMaintenanceProgress(Integer vfi) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        Integer userType = (Integer) map.get("usertype");
+        Integer clientId = commonService.getId(account, userType);
+        System.out.println(clientId);
+        VehicleFault vehicleFault = clientService.queryVehicleFaultInfoByVFId(vfi);
+        if(vehicleFault == null) {
+            log.info("客户：{} 请求查询了一个不存在的订单：{}",clientId,vfi);
+            return Result.error("该维修订单不存在");
+        }
+        else if(!frontDeskService.checkCarBelong(vehicleFault.getVin(),clientId)) {
+            log.info("客户：{} 请求查询车辆故障号：{}，但客户与车辆的归属关系不存在",clientId,vfi);
+            return Result.error("该车辆与用户的归属关系不存在！");
+        }
+        else {  //此时是正常的查询
+            log.info("客户：{} 请求查询车辆故障号：{}的维修进度信息",clientId,vfi);
+            MaintenanceProgress maintenanceProgress = maintenanceProgressService.queryMaintenanceProgress(vfi);
+            return Result.success(maintenanceProgress);
+        }
+    }
 
 }

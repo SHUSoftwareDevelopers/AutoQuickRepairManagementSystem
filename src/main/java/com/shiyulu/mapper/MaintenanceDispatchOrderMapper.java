@@ -20,4 +20,6 @@ public interface MaintenanceDispatchOrderMapper {
     List<MaintenanceDispatchOrder> queryDispatchOrder(Integer isAssigned);
 
     Integer checkIsRepairTaskFinish(Integer riid);
+
+    List<MaintenanceDispatchOrder> listMaintenanceDispatchOrderByRiid(Integer riid);
 }

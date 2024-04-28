@@ -68,4 +68,8 @@
         select count(*) from maintenancedispatchorder where riid = #{riid} and isComplete = 0
     </select>
 
+    <select id="listMaintenanceDispatchOrderByRiid" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
+        select * from maintenancedispatchorder where riid = #{riid};
+    </select>
+
 </mapper>

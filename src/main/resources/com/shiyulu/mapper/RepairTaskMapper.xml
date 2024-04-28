@@ -47,4 +47,12 @@
         where riid = #{riid}
     </update>
 
+    <select id="listRepairTaskByRai" resultType="com.shiyulu.pojo.RepairTask">
+        select * from repairtask where repairtask.rai = #{rai}
+    </select>
+
+    <select id="getFinishedRepairTaskNumByRai" resultType="integer">
+        select count(*) from repairtask where repairtask.rai = #{rai} and repairtask.isComplete = 1
+    </select>
+
 </mapper>

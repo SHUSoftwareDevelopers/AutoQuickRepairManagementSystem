@@ -9,6 +9,5 @@ public interface RepairAuthorizationService {
 
     RepairAuthorization getRepairAuthorizationByVfi(Integer vfi);
 
-
     void updateRepairAuthorization(RepairAuthorization repairAuthorization);
 }

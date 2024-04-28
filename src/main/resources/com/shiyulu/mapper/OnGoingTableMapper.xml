@@ -47,4 +47,8 @@
         </where>
     </select>
 
+    <select id="listOnGoingTableByMdoid" resultType="com.shiyulu.pojo.OnGoingTable">
+        select * from ongoingtable where mdoid = #{mdoid}
+    </select>
+
 </mapper>

@@ -5,8 +5,8 @@
 <mapper namespace="com.shiyulu.mapper.VehicleFaultMapper">
 
     <insert id="addMaintenanceAttorney">
-        insert into vehiclefault (maintenanceType, taskClassification, paymentMethod, vin, createTime, updateTime)
-        values (#{maintenanceType}, #{taskClassification},#{paymentMethod},#{vin},#{createTime},#{updateTime})
+        insert into vehiclefault (maintenanceType, taskClassification, paymentMethod, vin, createTime, updateTime,repairStatus)
+        values (#{maintenanceType}, #{taskClassification},#{paymentMethod},#{vin},#{createTime},#{updateTime},#{repairStatus})
     </insert>
 
     <update id="updateMaintenanceAttorney">
@@ -33,9 +33,12 @@
             </if>
 
             <if test="updateTime != null">
-                updateTime = #{updateTime}
+                updateTime = #{updateTime},
             </if>
 
+            <if test="repairStatus != null">
+                repairStatus = #{repairStatus},
+            </if>
         </set>
         where vehiclefault.vfi = #{vfi}
     </update>
@@ -43,4 +46,18 @@
     <select id="queryMaintenanceAttorneyByVfi" resultType="com.shiyulu.pojo.VehicleFault">
         select * from vehiclefault where vfi = #{vfi}
     </select>
+
+    <select id="queryMaintenanceInfoByOwnVehicles" resultType="com.shiyulu.pojo.VehicleFault">
+        select * from vehiclefault where vehiclefault.vin in
+        <foreach collection="vehicleList" item="vin" separator="," open="(" close=")">
+            #{vin}
+        </foreach>
+
+        <where>
+            <if test="repairStatus != null">
+                and repairStatus = #{repairStatus}
+            </if>
+        </where>
+    </select>
+
 </mapper>

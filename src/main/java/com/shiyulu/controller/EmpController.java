@@ -105,6 +105,7 @@ public class EmpController {
             log.info("不存在的车辆：{}，为此车辆添加故障信息失败！", vehicleFault.getVin());
             return Result.error("不存在的车辆，为此车辆添加故障信息失败！");
         } else {
+            vehicleFault.setRepairStatus(0);
             log.info("为车辆：{}添加故障信息：{}", vehicleFault.getVin(), vehicleFault);
             vehicleFaultService.addMaintenanceAttorney(vehicleFault);
             return Result.success();
