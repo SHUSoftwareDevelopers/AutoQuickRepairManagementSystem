@@ -59,4 +59,28 @@
         </where>
     </select>
 
+    <select id="queryClient_Car" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle where clientId = #{clientId}
+    </select>
+
+    <select id="queryAllCarInfo" resultType="com.shiyulu.pojo.VehicleAndOwner">
+        select user.account,user.password,user.userType,user.username,user.avatar,user.email,user.phone,
+                client.clientId,client.clientName,client.clientType,client.discountRate,client.businessContact,client.businessTele,
+                vehicle.vin,vehicle.license,vehicle.vehicleType,vehicle.vehicleColor,vehicle.createTime,vehicle.updateTime
+        from user inner join client on user.account = client.account inner join vehicle on client.clientId = vehicle.clientId
+        <where>
+            <if test = "vehicleType != null">
+                vehicleType = #{vehicleType}
+            </if>
+
+            <if test="vehicleColor != null and vehicleColor != '' ">
+                vehicleColor = #{vehicleColor}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryClientById" resultType="com.shiyulu.pojo.Client">
+        select * from client where clientId = #{clientId}
+    </select>
+
 </mapper>

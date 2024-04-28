@@ -47,4 +47,7 @@ public interface ClientMapper {
     Integer findIdByAccount(String account);
 
     List<Vehicle> queryOwnCar(Integer clientId,String vehicleColor,String vehicleType);
+
+    Client queryClientInfoByAccount(String account);
+
 }

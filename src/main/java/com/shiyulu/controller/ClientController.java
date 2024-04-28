@@ -59,7 +59,20 @@ public class ClientController {
     @GetMapping("/queryById/{clientId}")
     public Result queryAllClientInfoById(@PathVariable Integer clientId){
         Client client  = clientService.queryClientInfoById(clientId);
-        if(client == null){
+        if(client == null) {
+            return Result.error("该用户不存在");
+        }
+        return Result.success(client);
+    }
+
+    //查询当前登录的客户账号的信息
+    @GetMapping("/queryMyInfo")
+    public Result queryAllClientInfoById(){
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        log.info("账号：{} 查询自身客户信息",account);
+        Client client = clientService.queryClientInfoByAccount(account);
+        if(client == null) {
             return Result.error("该用户不存在");
         }
         return Result.success(client);
@@ -99,21 +112,6 @@ public class ClientController {
         return Result.success(ownVehicles);
     }
 
-    //根据客户ID查询某个客户的车辆信息
-    @GetMapping("/findCar/{clientId}")
-    public Result queryVehicleInfoByClientId(@RequestParam(defaultValue = "1") Integer page,
-                                             @RequestParam(defaultValue = "10") Integer pageSize,
-                                             @PathVariable Integer clientId){
-        PageBean userVehicles  = clientService.queryVehicleInfoByClientId(page,pageSize,clientId);
-        if(userVehicles == null){
-            return Result.error("该客户不存在");
-        }
-        if(userVehicles.getTotal() == 0){
-            return Result.error("该客户的数据不存在");
-        }
-        return Result.success(userVehicles);
-    }
-
     //查询全部的客户车辆故障信息，主要用于后台展示
     @GetMapping("/findFault")
     public Result queryAllVehicleFaultInfo(@RequestParam(defaultValue = "1") Integer page,
@@ -135,7 +133,7 @@ public class ClientController {
     @GetMapping("/findFaultByClient/{clientId}")
     public Result queryVehicleFaultInfoByVFId(@RequestParam(defaultValue = "1") Integer page,
                                               @RequestParam(defaultValue = "10") Integer pageSize,
-                                              @PathVariable Integer clientId){
+                                              @PathVariable Integer clientId) {
         PageBean vehicleFaults  = clientService.queryVehicleFaultInfoByClientId(page,pageSize,clientId);
         if(vehicleFaults == null){
             return Result.error("该客户不存在或名下没有车辆");
@@ -178,4 +176,7 @@ public class ClientController {
 
         return Result.error("该账号已被占用！");
     }
+
+    // 客户查询自己车辆的维修进度
+
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiyulu.mapper.RepairAuthorizationMapper">
+
+    <insert id="addRepairAuthorization">
+        insert into repairauthorization
+        (clientId, vfi, empId, mileage, onboardItems, checkResult,
+         repairMethod, isWashCar, isGetFormerComponent, totalRepairCost,
+         createTime, updateTime, estDelivTime, currentRepairStatus)
+        values (#{clientId}, #{vfi}, #{empId}, #{mileage}, #{onboardItems}, #{checkResult},
+                #{repairMethod}, #{isWashCar}, #{isGetFormerComponent}, #{totalRepairCost},
+                #{createTime}, #{updateTime}, #{estDelivTime}, #{currentRepairStatus})
+    </insert>
+
+    <select id="getRepairAuthorizationByRai" resultType="com.shiyulu.pojo.RepairAuthorization">
+        select * from repairauthorization where rai = #{rai}
+    </select>
+
+    <select id="getRepairAuthorizationByVfi" resultType="com.shiyulu.pojo.RepairAuthorization">
+        select * from repairauthorization where vfi = #{vfi}
+    </select>
+
+    <update id="updateRepairAuthorization">
+        update repairauthorization
+        <set>
+            <if test="clientId != null">
+                clientId = #{clientId},
+            </if>
+
+            <if test="vfi != null">
+                vfi = #{vfi},
+            </if>
+
+            <if test="empId != null">
+                empId = #{empId},
+            </if>
+
+            <if test="mileage != null">
+                mileage = #{mileage},
+            </if>
+
+            <if test="onboardItems != null and onboardItems != '' ">
+                onboardItems = #{onboardItems},
+            </if>
+
+            <if test="checkResult != null and checkResult != '' ">
+                checkResult = #{checkResult},
+            </if>
+
+            <if test="repairMethod != null and repairMethod != '' ">
+                repairMethod = #{repairMethod},
+            </if>
+
+            <if test="isWashCar != null">
+                isWashCar = #{isWashCar},
+            </if>
+
+            <if test="isGetFormerComponent != null">
+                isGetFormerComponent = #{isGetFormerComponent},
+            </if>
+
+            <if test="totalRepairCost != null">
+                totalRepairCost = #{totalRepairCost},
+            </if>
+
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+
+            <if test="estDelivTime != null">
+                estDelivTime = #{estDelivTime},
+            </if>
+
+            <if test="currentRepairStatus != null and currentRepairStatus != '' ">
+                currentRepairStatus = #{currentRepairStatus},
+            </if>
+        </set>
+        where repairauthorization.rai = #{rai}
+    </update>
+
+</mapper>

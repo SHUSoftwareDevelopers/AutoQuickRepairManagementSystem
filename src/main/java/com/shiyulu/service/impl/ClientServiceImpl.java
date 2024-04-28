@@ -150,4 +150,9 @@ public class ClientServiceImpl implements ClientService {
         //对查询结果进行封装
         return new PageBean(p.getTotal(),p.getResult());
     }
+
+    @Override
+    public Client queryClientInfoByAccount(String account) {
+        return clientMapper.queryClientInfoByAccount(account);
+    }
 }

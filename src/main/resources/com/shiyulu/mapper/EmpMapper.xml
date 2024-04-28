@@ -41,4 +41,9 @@
     <select id="queryMyInfo" resultType="com.shiyulu.pojo.Emp">
         select * from emp where emp.account = #{account}
     </select>
+
+    <insert id="addMaintenanceAttorney">
+        insert into vehiclefault (maintenanceType, taskClassification, paymentMethod, vin, createTime, updateTime)
+        values (#{maintenanceType}, #{taskClassification},#{paymentMethod},#{vin},#{createTime},#{updateTime})
+    </insert>
 </mapper>

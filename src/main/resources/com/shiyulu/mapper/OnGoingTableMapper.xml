@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiyulu.mapper.OnGoingTableMapper">
+    <insert id="addOnGoingTable">
+        insert into ongoingtable
+        (mdoid, assignId, receiveId, status, createTime, endTime)
+        values (#{mdoid}, #{assignId}, #{receivedId}, #{status}, #{createTime}, #{endTime})
+    </insert>
+
+    <select id="getOnGoingTableByogId" resultType="com.shiyulu.pojo.OnGoingTable">
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where ogid = #{ogId}
+    </select>
+
+    <select id="getOnGoingTableBymdoid" resultType="com.shiyulu.pojo.OnGoingTable">
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where mdoid = #{mdoid} and (status = 0 or status = 1)
+    </select>
+
+    <update id="updateOnGoingTable">
+        update ongoingtable
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+
+            <if test="endTime != null">
+                endTime = #{endTime},
+            </if>
+        </set>
+        where ogid = #{ogid}
+    </update>
+
+    <delete id="deleteOnGoingTable">
+        delete from ongoingtable where ogid = #{ogId}
+    </delete>
+
+    <select id="empQueryOnGoingTable" resultType="com.shiyulu.pojo.OnGoingTable">
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where receiveId = #{empId}
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiyulu.mapper.RepairTaskMapper">
+    <insert id="addRepairTask">
+        insert into repairtask
+        (repairitem, needComponent, pricePerComponent, totalComponentPrice, rai, createTime, updateTime, isComplete)
+        values (#{repairItem}, #{needComponent}, #{pricePerComponent}, #{totalComponentPrice}, #{rai}, #{createTime}, #{updateTime}, #{isComplete})
+    </insert>
+
+    <select id="getRepairTaskByRiid" resultType="com.shiyulu.pojo.RepairTask">
+        select * from repairtask where riid = #{riid}
+    </select>
+
+    <update id="updateRepairTask">
+        update repairtask
+        <set>
+            <if test="repairItem != null and repairItem != '' ">
+                repairitem = #{repairItem},
+            </if>
+
+            <if test="needComponent != null and needComponent != '' ">
+                needComponent = #{needComponent},
+            </if>
+
+            <if test="pricePerComponent != null">
+                pricePerComponent = #{pricePerComponent},
+            </if>
+
+            <if test="totalComponentPrice != null">
+                totalComponentPrice = #{totalComponentPrice},
+            </if>
+
+            <if test="rai != null">
+                rai = #{rai},
+            </if>
+
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+
+            <if test="isComplete != null">
+                isComplete = #{isComplete}
+            </if>
+        </set>
+        where riid = #{riid}
+    </update>
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.shiyulu.service;
 
+import com.shiyulu.pojo.Client;
 import com.shiyulu.pojo.PageBean;
 import com.shiyulu.pojo.Vehicle;
 
@@ -17,4 +18,10 @@ public interface FrontDeskService {
     Vehicle queryCarByVin(String vin);
 
     PageBean queryAllClientInfo(Integer page, Integer pageSize, Integer clientType);
+
+    PageBean queryClient_Car(Integer page, Integer pageSize, Integer clientId);
+
+    PageBean queryAllCarInfo(Integer page, Integer pageSize, Integer vehicleType, String vehicleColor);
+
+    Client queryClientById(Integer clientId);
 }
