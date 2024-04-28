@@ -3,6 +3,7 @@ package com.shiyulu.controller;
 import com.shiyulu.mapper.ClientMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
+
 import com.shiyulu.service.CommonService;
 import com.shiyulu.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
@@ -78,9 +79,24 @@ public class ClientController {
     //查询全部的客户车辆信息，主要用于后台展示
     @GetMapping("/findCar")
     public Result queryAllVehicleInfo(@RequestParam(defaultValue = "1") Integer page,
-                                     @RequestParam(defaultValue = "10") Integer pageSize){
-        PageBean vehicles  = clientService.queryAllVehicleInfo(page,pageSize);
+                                     @RequestParam(defaultValue = "10") Integer pageSize,
+                                      String vehicleColor,
+                                      String vehicleType,
+                                      Integer clientId){
+        PageBean vehicles  = clientService.queryAllVehicleInfo(page,pageSize,vehicleColor, vehicleType, clientId);
         return Result.success(vehicles);
+    }
+
+    //WANG：增加自己查自己车
+    @GetMapping("/queryOwnCar")
+    public Result queryCar(@RequestParam(defaultValue = "1") Integer page,
+                           @RequestParam(defaultValue = "10") Integer pageSize,
+                           String vehicleColor,
+                           String vehicleType){
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer clientId = (Integer) map.get("id");
+        PageBean ownVehicles = clientService.queryOwnCar(page,pageSize,vehicleColor,vehicleType,clientId);
+        return Result.success(ownVehicles);
     }
 
     //根据客户ID查询某个客户的车辆信息

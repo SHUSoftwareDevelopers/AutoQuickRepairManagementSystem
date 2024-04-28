@@ -47,12 +47,12 @@ public class ClientServiceImpl implements ClientService {
 
     //分页查询所有的客户车辆信息
     @Override
-    public PageBean queryAllVehicleInfo(Integer page, Integer pageSize){
+    public PageBean queryAllVehicleInfo(Integer page, Integer pageSize, String vehicleColor, String vehicleType, Integer clientId){
         //设置分页参数
         PageHelper.startPage(page,pageSize);
 
         //查询结果
-        List<Vehicle> vehicles = clientMapper.selectAllVehicleInfo();
+        List<Vehicle> vehicles = clientMapper.selectAllVehicleInfo(vehicleColor, vehicleType, clientId);
         log.info("vehicles:{}",vehicles);
         //用PageHelper自带的Page类型对查询结果进行强制转型
         Page<Vehicle> p = (Page<Vehicle>) vehicles;
@@ -134,5 +134,20 @@ public class ClientServiceImpl implements ClientService {
         user.setUpdateTime(LocalDateTime.now());
         commonMapper.updateInfo(user);
         clientMapper.updateInfo(client);
+    }
+
+    @Override
+    public PageBean queryOwnCar(Integer page, Integer pageSize, String vehicleColor, String vehicleType, Integer clientId) {
+        //设置分页参数
+        PageHelper.startPage(page,pageSize);
+
+        //查询结果
+        List<Vehicle> vehicles = clientMapper.queryOwnCar(clientId,vehicleColor,vehicleType);
+        log.info("vehicles:{}",vehicles);
+        //用PageHelper自带的Page类型对查询结果进行强制转型
+        Page<Vehicle> p = (Page<Vehicle>) vehicles;
+
+        //对查询结果进行封装
+        return new PageBean(p.getTotal(),p.getResult());
     }
 }

@@ -42,7 +42,37 @@
                 client.clientName like CONCAT('%', #{clientName}, '%')
             </if>
             <if test="clientType!=null">
-                client.clientType = #{clientType}
+                and client.clientType = #{clientType}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryOwnCar" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle
+        <where>
+            <if test="vehicleType!=null and vehicleType!=''">
+                vehicle.vehicleType = #{vehicleType}
+            </if>
+            <if test="vehicleColor!=null and vehicleColor!=''">
+                and vehicle.vehicleColor = #{vehicleColor}
+            </if>
+            <if test="clientId!=null">
+                and vehicle.clientId = #{clientId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllVehicleInfo" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle
+        <where>
+            <if test="vehicleType!=null and vehicleType!=''">
+                vehicle.vehicleType = #{vehicleType}
+            </if>
+            <if test="vehicleColor!=null and vehicleColor!=''">
+                and vehicle.vehicleColor = #{vehicleColor}
+            </if>
+            <if test="clientId!=null">
+                and vehicle.clientId = #{clientId}
             </if>
         </where>
     </select>

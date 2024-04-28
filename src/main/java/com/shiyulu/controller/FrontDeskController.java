@@ -30,8 +30,8 @@ public class FrontDeskController {
         }
     }
     // 删除某个客户名下的车辆，注意级联
-    @DeleteMapping("/deleteCar")
-    public Result deleteCar(String vin) {
+    @DeleteMapping("/deleteCar/{vin}")
+    public Result deleteCar(@PathVariable String vin) {
         Vehicle vehicle = frontDeskService.queryCarByVin(vin);
         if(vehicle == null) {
             log.info("不存在的车辆：{}，删除失败！",vin);
