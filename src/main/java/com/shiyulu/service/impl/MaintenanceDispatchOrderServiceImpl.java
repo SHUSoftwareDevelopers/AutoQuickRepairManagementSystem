@@ -20,6 +20,13 @@ public class MaintenanceDispatchOrderServiceImpl implements MaintenanceDispatchO
     private MaintenanceDispatchOrderMapper maintenanceDispatchOrderMapper;
     @Autowired
     private RepairTaskMapper repairTaskMapper;
+
+    @Override
+    public boolean checkRepairTaskIsFinish(Integer riid) {
+        Integer remainMdo = maintenanceDispatchOrderMapper.checkIsRepairTaskFinish(riid);
+        return remainMdo.equals(0);
+    }
+
     @Override
     public void addDispatchOrder(MaintenanceDispatchOrder maintenanceDispatchOrder) {
         maintenanceDispatchOrder.setCreateTime(LocalDateTime.now());

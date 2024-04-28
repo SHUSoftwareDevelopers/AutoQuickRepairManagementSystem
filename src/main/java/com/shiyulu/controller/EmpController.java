@@ -226,6 +226,7 @@ public class EmpController {
     public Result addDispatchOrder(@RequestBody MaintenanceDispatchOrder maintenanceDispatchOrder) {
         maintenanceDispatchOrder.setEmpId(null);
         maintenanceDispatchOrder.setEmpType(null);
+        maintenanceDispatchOrder.setIsComplete(0);
         maintenanceDispatchOrderService.addDispatchOrder(maintenanceDispatchOrder);
         return Result.success();
     }
@@ -241,6 +242,17 @@ public class EmpController {
         else if(maintenanceDispatchOrder1.getIsComplete() == 1) {
             log.info("维修任务分配单号：{}已经完成，更新维修任务分配单失败！", maintenanceDispatchOrder.getMdoid());
             return Result.error("维修任务分配单已经完成，更新维修任务分配单失败！");
+        }
+        else if(maintenanceDispatchOrder.getEmpId() == null && maintenanceDispatchOrder1.getEmpId() != null) {  //经理强制取消了此派工单的委托任务进行表
+            log.info("维修派工单：{}由经理强制终止了对应的任务进行表",maintenanceDispatchOrder.getMdoid());
+            OnGoingTable onGoingTable = onGoingTableService.getOnGoingTableBymdoid(maintenanceDispatchOrder.getMdoid());
+            onGoingTable.setStatus(4);
+            onGoingTableService.updateOnGoingTable(onGoingTable);
+            // 手动更新任务发配单的信息
+            maintenanceDispatchOrder.setEmpId(null);
+            maintenanceDispatchOrder.setEmpType(null);
+            maintenanceDispatchOrderService.updateDispatchOrder(maintenanceDispatchOrder);
+            return Result.success();
         }
         else if(maintenanceDispatchOrder.getEmpId().equals(maintenanceDispatchOrder1.getEmpId()) == false) {    //此时更改了接单员工
             log.info("经理强制更改了任务分配表中的员工信息，此时需要重新分配任务！");
@@ -259,6 +271,7 @@ public class EmpController {
                 onGoingTable2.setAssignId(assignId);
                 onGoingTable2.setReceivedId(maintenanceDispatchOrder.getEmpId());
                 onGoingTable2.setStatus(0);
+                // 手动更新任务发配单的信息
                 maintenanceDispatchOrderService.updateDispatchOrder(maintenanceDispatchOrder);
                 onGoingTableService.addOnGoingTable(onGoingTable2);
             }
@@ -314,17 +327,21 @@ public class EmpController {
         else {
             Map<String, Object> map = ThreadLocalUtil.get();
             String account = (String) map.get("account");
-            User user = commonService.findByAccount(account);
-            maintenanceDispatchOrder.setEmpType(user.getUserType());
-            maintenanceDispatchOrderService.updateDispatchOrder(maintenanceDispatchOrder);
             Integer userType = (Integer) map.get("usertype");
             Integer receivedId = commonService.getId(account, userType);
+            User user = commonService.findByAccount(account);
+            maintenanceDispatchOrder.setEmpType(userType);
+            maintenanceDispatchOrder.setEmpId(receivedId);
+            // 更新任务发配单
+            maintenanceDispatchOrderService.updateDispatchOrder(maintenanceDispatchOrder);
+
             System.out.println("receivedId: " + receivedId);
             OnGoingTable onGoingTable = new OnGoingTable();
             onGoingTable.setMdoid(maintenanceDispatchOrder.getMdoid());
-            onGoingTable.setAssignId(maintenanceDispatchOrder.getEmpId());
+            onGoingTable.setAssignId(receivedId);
             onGoingTable.setReceivedId(receivedId);
             onGoingTable.setStatus(0);
+            // 更新任务进度表
             onGoingTableService.addOnGoingTable(onGoingTable);
             return Result.success();
         }
@@ -334,6 +351,10 @@ public class EmpController {
     @PutMapping("/updateOnGoingTable")
     public Result updateOnGoingTable(@RequestBody OnGoingTable onGoingTable) {
         OnGoingTable onGoingTable1 = onGoingTableService.getOnGoingTableByogId(onGoingTable.getOgid());
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        Integer userType = (Integer) map.get("usertype");
+        Integer empId = commonService.getId(account, userType);
         if(onGoingTable1 == null) {
             log.info("不存在的进度单号：{}，更新进度单号失败！", onGoingTable.getMdoid());
             return Result.error("不存在的维修任务分配单号，更新维修任务分配单失败！");
@@ -346,56 +367,78 @@ public class EmpController {
             log.info("维修任务分配单号：{}已经被强制中断，无法更新完成此分配单的历史记录{}！", onGoingTable.getMdoid(),onGoingTable.getOgid());
             return Result.error("维修任务分配单号已经被强制中断，无法更新完成此分配单的历史记录！");
         }
+        else if(onGoingTable1.getStatus() == 2) {
+            log.info("此任务记录号：{}已经被拒绝了，无法更新",onGoingTable1.getOgid());
+            return Result.error("此任务记录号已经被拒绝了，无法更新");
+        }
+        else if(!empId.equals(onGoingTable1.getReceivedId())) {
+            log.info("员工：{}更新了不属于自己的进度单号：{}，更新进度单号失败！", empId,onGoingTable1.getOgid());
+            return Result.error("员工更新了不属于自己的进度单号，更新进度单号失败！");
+        }
         else {
+            if(onGoingTable.getStatus().equals(4)) {
+                log.info("员工无法对任务进度号：{} 强制中断！",onGoingTable.getOgid());
+                return Result.error("员工无法强制中断任务进度");
+            }else {
+                log.info("员工: {} 对任务进度号：{} 的状态修改为：{} ！",empId,onGoingTable.getOgid(), onGoingTable.getStatus());
+            }
             onGoingTableService.updateOnGoingTable(onGoingTable);
+
+            MaintenanceDispatchOrder maintenanceDispatchOrder = maintenanceDispatchOrderService.getDispatchOrderBymdoId(onGoingTable1.getMdoid());
+            boolean IsFinish =  maintenanceDispatchOrderService.checkRepairTaskIsFinish(maintenanceDispatchOrder.getRiid());
+            if(IsFinish) {
+                RepairTask repairTask = repairTaskService.getRepairTaskByRiid(maintenanceDispatchOrder.getRiid());
+                repairTask.setIsComplete(1);
+                repairTaskService.updateRepairTask(repairTask);
+            }
             return Result.success();
         }
     }
 
-    // 员工拒绝维修派工单，同步更新ongoingtable中的状态码，以及维修任务分配单中的empId字段
-    @PutMapping("/rejectOnGoingTable")
-    public Result rejectOnGoingTable(@RequestBody OnGoingTable onGoingTable) {
-        onGoingTable.setStatus(2);
-        OnGoingTable onGoingTable1 = onGoingTableService.getOnGoingTableByogId(onGoingTable.getOgid());
-        MaintenanceDispatchOrder maintenanceDispatchOrder = maintenanceDispatchOrderService.getDispatchOrderBymdoId(onGoingTable1.getMdoid());
-        Map<String, Object> map = ThreadLocalUtil.get();
-        String account = (String) map.get("account");
-        Integer userType = (Integer) map.get("usertype");
-        Integer empId = commonService.getId(account, userType);
-        System.out.println("empId: " + empId);
-        if(maintenanceDispatchOrder == null) {
-            log.info("不存在的维修任务分配单号：{}，拒绝进度单号失败！", onGoingTable.getMdoid());
-            return Result.error("不存在的维修任务分配单号，拒绝进度单号失败！");
-        }
-        else if(onGoingTable1 == null) {
-            log.info("不存在的进度单号：{}，拒绝进度单号失败！", onGoingTable.getMdoid());
-            return Result.error("不存在的进度单号，拒绝进度单号失败！");
-        }
-        else if(onGoingTable1.getStatus() == 3) {
-            log.info("维修任务分配单号：{}已经完成，无法拒绝完成此分配单的历史记录{}！", onGoingTable.getMdoid(),onGoingTable.getOgid());
-            return Result.error("维修任务分配单号已经完成，无法拒绝完成此分配单的历史记录！");
-        }
-        else if(!empId.equals(onGoingTable.getReceivedId())) {
-            log.info("员工：{}拒绝了不属于自己的进度单号：{}，拒绝进度单号失败！", empId,onGoingTable.getOgid());
-            return Result.error("员工拒绝了不属于自己的进度单号，拒绝进度单号失败！");
-        }
-        else if(onGoingTable1.getStatus() == 4) {
-            log.info("维修任务分配单号：{}已经由历史记录{}强制中断！", onGoingTable.getMdoid(),onGoingTable.getOgid());
-            return Result.error("维修任务分配单号已经被强制中断，无法拒绝此被强制终端的历史记录！");
-        }
-        else if(onGoingTable1.getStatus() == 2) {
-            log.info("维修任务分配单号：{}已经被历史记录{}拒绝过了！", onGoingTable.getMdoid(),onGoingTable.getOgid());
-            return Result.error("维修任务分配单号已经被拒绝，无法再次拒绝此分配单的历史记录！");
-        }
-        else {
-            onGoingTableService.updateOnGoingTable(onGoingTable);
-            // 拒绝进度表后需要将维修任务分配单中的empId字段置空
-            maintenanceDispatchOrder.setEmpId(null);
-            maintenanceDispatchOrder.setEmpType(null);
-            maintenanceDispatchOrderService.updateDispatchOrder(maintenanceDispatchOrder);
-            return Result.success();
-        }
-    }
+//    // 员工拒绝维修派工单，同步更新ongoingtable中的状态码，以及维修任务分配单中的empId字段,将其置为空
+//    @PutMapping("/rejectOnGoingTable")
+//    public Result rejectOnGoingTable(@RequestBody OnGoingTable onGoingTable) {
+//        onGoingTable.setStatus(2);
+//        OnGoingTable onGoingTable1 = onGoingTableService.getOnGoingTableByogId(onGoingTable.getOgid());
+//        MaintenanceDispatchOrder maintenanceDispatchOrder = maintenanceDispatchOrderService.getDispatchOrderBymdoId(onGoingTable1.getMdoid());
+//        Map<String, Object> map = ThreadLocalUtil.get();
+//        String account = (String) map.get("account");
+//        Integer userType = (Integer) map.get("usertype");
+//        Integer empId = commonService.getId(account, userType);
+//        System.out.println("empId: " + empId);
+//        if(maintenanceDispatchOrder == null) {
+//            log.info("不存在的维修任务分配单号：{}，拒绝进度单号失败！", onGoingTable.getMdoid());
+//            return Result.error("不存在的维修任务分配单号，拒绝进度单号失败！");
+//        }
+//        else if(onGoingTable1 == null) {
+//            log.info("不存在的进度单号：{}，拒绝进度单号失败！", onGoingTable.getMdoid());
+//            return Result.error("不存在的进度单号，拒绝进度单号失败！");
+//        }
+//        else if(onGoingTable1.getStatus() == 3) {
+//            log.info("维修任务分配单号：{}已经完成，无法拒绝完成此分配单的历史记录{}！", onGoingTable.getMdoid(),onGoingTable.getOgid());
+//            return Result.error("维修任务分配单号已经完成，无法拒绝完成此分配单的历史记录！");
+//        }
+//        else if(!empId.equals(onGoingTable1.getReceivedId())) {
+//            log.info("员工：{}拒绝了不属于自己的进度单号：{}，拒绝进度单号失败！", empId,onGoingTable1.getOgid());
+//            return Result.error("员工拒绝了不属于自己的进度单号，拒绝进度单号失败！");
+//        }
+//        else if(onGoingTable1.getStatus() == 4) {
+//            log.info("维修任务分配单号：{}已经由历史记录{}强制中断！", onGoingTable.getMdoid(),onGoingTable.getOgid());
+//            return Result.error("维修任务分配单号已经被强制中断，无法拒绝此被强制终端的历史记录！");
+//        }
+//        else if(onGoingTable1.getStatus() == 2) {
+//            log.info("维修任务分配单号：{}已经被历史记录{}拒绝过了！", onGoingTable.getMdoid(),onGoingTable.getOgid());
+//            return Result.error("维修任务分配单号已经被拒绝，无法再次拒绝此分配单的历史记录！");
+//        }
+//        else {
+//            onGoingTableService.updateOnGoingTable(onGoingTable);
+//            // 拒绝进度表后需要将维修任务分配单中的empId字段置空
+//            maintenanceDispatchOrder.setEmpId(null);
+//            maintenanceDispatchOrder.setEmpType(null);
+//            maintenanceDispatchOrderService.updateDispatchOrder(maintenanceDispatchOrder);
+//            return Result.success();
+//        }
+//    }
 
     //员工分页查询自己的任务记录
     @GetMapping("/empQueryOnGoingTable")

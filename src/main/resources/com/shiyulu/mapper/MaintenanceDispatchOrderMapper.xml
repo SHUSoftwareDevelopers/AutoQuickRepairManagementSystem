@@ -64,8 +64,8 @@
         </where>
     </select>
 
-    <select id="checkIsRepairTaskFinish" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
-        select * from maintenancedispatchorder where riid = #{riid} and isComplete = 0
+    <select id="checkIsRepairTaskFinish" resultType="integer">
+        select count(*) from maintenancedispatchorder where riid = #{riid} and isComplete = 0
     </select>
 
 </mapper>

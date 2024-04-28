@@ -19,5 +19,5 @@ public interface MaintenanceDispatchOrderMapper {
 
     List<MaintenanceDispatchOrder> queryDispatchOrder(Integer isAssigned);
 
-    List<MaintenanceDispatchOrder> checkIsRepairTaskFinish(Integer riid);
+    Integer checkIsRepairTaskFinish(Integer riid);
 }

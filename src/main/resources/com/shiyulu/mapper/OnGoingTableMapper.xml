@@ -10,11 +10,13 @@
     </insert>
 
     <select id="getOnGoingTableByogId" resultType="com.shiyulu.pojo.OnGoingTable">
-        select * from ongoingtable where ogid = #{ogId}
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where ogid = #{ogId}
     </select>
 
     <select id="getOnGoingTableBymdoid" resultType="com.shiyulu.pojo.OnGoingTable">
-        select * from ongoingtable where mdoid = #{mdoid} and (status = 0 or status = 1)
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where mdoid = #{mdoid} and (status = 0 or status = 1)
     </select>
 
     <update id="updateOnGoingTable">
@@ -36,7 +38,8 @@
     </delete>
 
     <select id="empQueryOnGoingTable" resultType="com.shiyulu.pojo.OnGoingTable">
-        select * from ongoingtable where receiveId = #{empId}
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where receiveId = #{empId}
         <where>
             <if test="status != null">
                 and status = #{status}

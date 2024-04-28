@@ -6,6 +6,9 @@ import com.shiyulu.pojo.PageBean;
 import java.util.List;
 
 public interface MaintenanceDispatchOrderService {
+
+    boolean checkRepairTaskIsFinish(Integer riid);
+
     void addDispatchOrder(MaintenanceDispatchOrder maintenanceDispatchOrder);
     MaintenanceDispatchOrder getDispatchOrderBymdoId(Integer mdoId);
     MaintenanceDispatchOrder getDispatchOrderByriid(Integer riid);

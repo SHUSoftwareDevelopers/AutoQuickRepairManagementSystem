@@ -33,7 +33,7 @@ public class ClientController {
         String account = (String) map.get("account");
         log.info("账号：{} 查询自身客户信息",account);
         Client client = clientService.queryClientInfoByAccount(account);
-        if(client == null){
+        if(client == null) {
             return Result.error("该用户不存在");
         }
         return Result.success(client);
@@ -99,7 +99,7 @@ public class ClientController {
     @GetMapping("/findFaultByClient/{clientId}")
     public Result queryVehicleFaultInfoByVFId(@RequestParam(defaultValue = "1") Integer page,
                                               @RequestParam(defaultValue = "10") Integer pageSize,
-                                              @PathVariable Integer clientId){
+                                              @PathVariable Integer clientId) {
         PageBean vehicleFaults  = clientService.queryVehicleFaultInfoByClientId(page,pageSize,clientId);
         if(vehicleFaults == null){
             return Result.error("该客户不存在或名下没有车辆");
@@ -109,4 +109,8 @@ public class ClientController {
         }
         return Result.success(vehicleFaults);
     }
+
+    // 客户查询自己车辆的维修进度
+
+
 }

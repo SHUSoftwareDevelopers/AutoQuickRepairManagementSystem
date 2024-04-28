@@ -52,6 +52,9 @@ public class OnGoingTableServiceImpl implements OnGoingTableService {
 
     @Override
     public void updateOnGoingTable(OnGoingTable onGoingTable) {
+        System.out.println("========================");
+        System.out.println(onGoingTable);
+        System.out.println("===========================");
         if(onGoingTable.getStatus() == 2 || onGoingTable.getStatus() == 3 || onGoingTable.getStatus() == 4) {
             onGoingTable.setEndTime(LocalDateTime.now());
         }
@@ -59,26 +62,17 @@ public class OnGoingTableServiceImpl implements OnGoingTableService {
         // 更新MaintenanceDispatchOrder表对应条目的修改时间
         MaintenanceDispatchOrder maintenanceDispatchOrder = maintenanceDispatchOrderMapper.getDispatchOrderBymdoId(onGoingTable.getMdoid());
         maintenanceDispatchOrder.setUpdateTime(LocalDateTime.now());
-        // 如果维修派工单已完成，那么需要将MaintenanceDispatchOrder表对应条目的状态改为已完成
-        if(onGoingTable.getStatus() == 3) {
+        if(onGoingTable.getStatus() == 2) {
+            maintenanceDispatchOrder.setEmpId(null);
+            maintenanceDispatchOrder.setEmpType(null);
+        }
+        else if(onGoingTable.getStatus() == 3) {    // 如果维修派工单已完成，那么需要将MaintenanceDispatchOrder表对应条目的状态改为已完成
             maintenanceDispatchOrder.setIsComplete(1);
         }
-        maintenanceDispatchOrderMapper.updateDispatchOrder(maintenanceDispatchOrder);
-        Integer riid = maintenanceDispatchOrder.getRiid();
-        List<MaintenanceDispatchOrder> maintenanceDispatchOrderList = maintenanceDispatchOrderMapper.checkIsRepairTaskFinish(riid);
-        System.out.println("******************");
-        System.out.println(maintenanceDispatchOrderList);
-        System.out.println("******************");
-        if(maintenanceDispatchOrderList.isEmpty()) {  //此时该riid任务的所有派工单已经完成
-            RepairTask repairTask = repairTaskMapper.getRepairTaskByRiid(riid);
-            System.out.println("(((");
-            System.out.println(repairTask);
-            repairTask.setIsComplete(1);
-            repairTask.setUpdateTime(LocalDateTime.now());
-            repairTaskMapper.updateRepairTask(repairTask);
+        // 更新维修派工单信息
+        if(onGoingTable.getStatus() != 4) { //由经理强制终止的任务进度表，对于派工单号的更新在controller层手动操控
+            maintenanceDispatchOrderMapper.updateDispatchOrder(maintenanceDispatchOrder);
         }
-
-
     }
 
     @Override
