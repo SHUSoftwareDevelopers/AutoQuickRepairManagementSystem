@@ -17,4 +17,6 @@ public interface RepairTaskMapper {
 
     Integer getFinishedRepairTaskNumByRai(Integer rai);
 
+    Double CalculateLaborCostOnriid(Integer riid);
+
 }

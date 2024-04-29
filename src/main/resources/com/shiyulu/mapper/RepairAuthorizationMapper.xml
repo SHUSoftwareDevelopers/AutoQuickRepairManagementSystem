@@ -8,10 +8,10 @@
         insert into repairauthorization
         (clientId, vfi, empId, mileage, onboardItems, checkResult,
          repairMethod, isWashCar, isGetFormerComponent, totalRepairCost,
-         createTime, updateTime, estDelivTime, currentRepairStatus)
+         createTime, updateTime, estDelivTime)
         values (#{clientId}, #{vfi}, #{empId}, #{mileage}, #{onboardItems}, #{checkResult},
                 #{repairMethod}, #{isWashCar}, #{isGetFormerComponent}, #{totalRepairCost},
-                #{createTime}, #{updateTime}, #{estDelivTime}, #{currentRepairStatus})
+                #{createTime}, #{updateTime}, #{estDelivTime})
     </insert>
 
     <select id="getRepairAuthorizationByRai" resultType="com.shiyulu.pojo.RepairAuthorization">
@@ -71,10 +71,6 @@
 
             <if test="estDelivTime != null">
                 estDelivTime = #{estDelivTime},
-            </if>
-
-            <if test="currentRepairStatus != null and currentRepairStatus != '' ">
-                currentRepairStatus = #{currentRepairStatus},
             </if>
         </set>
         where repairauthorization.rai = #{rai}

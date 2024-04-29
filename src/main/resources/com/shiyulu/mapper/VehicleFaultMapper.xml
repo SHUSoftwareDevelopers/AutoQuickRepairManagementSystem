@@ -60,4 +60,25 @@
         </where>
     </select>
 
+    <select id="listMaintenanceAttorney" resultType="com.shiyulu.pojo.VehicleFault">
+        select * from vehiclefault
+        <where>
+            <if test="maintenanceType != null">
+                maintenanceType = #{maintenanceType}
+            </if>
+
+            <if test="taskClassification != null">
+                and taskClassification = #{taskClassification}
+            </if>
+
+            <if test="paymentMethod != null">
+                and paymentMethod = #{paymentMethod}
+            </if>
+
+            <if test="vin != null and vin != '' ">
+                and vin = #{vin}
+            </if>
+        </where>
+    </select>
+
 </mapper>

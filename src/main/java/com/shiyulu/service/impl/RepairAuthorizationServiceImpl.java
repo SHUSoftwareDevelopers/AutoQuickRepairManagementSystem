@@ -15,6 +15,7 @@ public class RepairAuthorizationServiceImpl implements RepairAuthorizationServic
 
     @Override
     public void addRepairAuthorization(RepairAuthorization repairAuthorization) {
+        repairAuthorization.setTotalRepairCost(0.0);
         repairAuthorization.setCreateTime(LocalDateTime.now());
         repairAuthorization.setUpdateTime(LocalDateTime.now());
         repairAuthorizationMapper.addRepairAuthorization(repairAuthorization);

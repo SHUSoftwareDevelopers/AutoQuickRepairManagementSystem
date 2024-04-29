@@ -29,4 +29,9 @@ public class RepairTaskServiceImpl implements RepairTaskService {
     public RepairTask getRepairTaskByRiid(Integer riid) {
         return repairTaskMapper.getRepairTaskByRiid(riid);
     }
+
+    @Override
+    public Double calculateLaborCost(Integer riid) {
+        return repairTaskMapper.CalculateLaborCostOnriid(riid);
+    }
 }

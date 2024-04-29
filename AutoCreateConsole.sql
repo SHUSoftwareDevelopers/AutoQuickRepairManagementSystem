@@ -4,8 +4,8 @@ use autoquickrepairdatabase;
 create table user
 (
     account     varchar(30) primary key,
-    password    varchar(30) not null,
-    userType    tinyint not null,
+    password    varchar(80) not null,
+    userType    tinyint not null,   # 账号类别（0/管理员、1/前台、2/机修工、3/焊工、4/漆工、5/业务员、6/客户）
     username    varchar(20) not null,
     avatar      varchar(300),
     email       varchar(30),
@@ -13,6 +13,7 @@ create table user
     createTime  datetime not null,
     updateTime  datetime not null
 ) comment '账号登陆表';
+
 
 # 客户个人信息表
 # clientType中0代表个人，1代表单位
@@ -75,7 +76,7 @@ create table repairAuthorization
     clientId int unsigned comment '客户id',
     vfi int unsigned comment '故障单id',
     empId int unsigned comment '受理业务员id',
-    mileage double comment '行驶里程',
+    mileage double comment '行驶里程km',
     onboardItems varchar(300) comment '随车物品',
     checkResult varchar(300) comment '检查结果',
     repairMethod varchar(300) comment '维修方案',
@@ -92,7 +93,7 @@ create table repairAuthorization
 ) comment '维修委托书';
 
 # 维修委托内容（维修项目）
-create table repairtask
+create table repairtaskre
 (
     riid int unsigned auto_increment primary key comment '维修项目编号',
     repairitem varchar(300) comment '维修项目',
@@ -137,11 +138,44 @@ create table onGoingTable
     foreign key (receiveId) references emp(empId)
 ) comment '任务进行记录及历史记录表';
 
-# SELECT
-#     constraint_name,
-#     constraint_type,
-#     table_name
-# FROM
-#     information_schema.table_constraints
-# WHERE
-#     table_name = 'typepage';
+# **********后续对于表的修改**********
+alter table repairtask
+add isComplete boolean;
+
+# 0代表进行中，1代表未完成
+alter table vehicleFault add repairStatus tinyint;
+
+alter table repairAuthorization DROP currentRepairStatus;
+
+-- 设置repairTask的触发器
+create trigger LimitPublishTask before insert on repairtask # 在插入操作前检查
+for each row
+BEGIN
+    if exists(select * from vehicleFault inner join repairAuthorization on vehicleFault.vfi = repairAuthorization.vfi
+             where repairAuthorization.rai = new.rai and vehicleFault.repairStatus = 1) then
+        SIGNAL SQLSTATE '45000' set MESSAGE_TEXT = '该车辆故障已经维修完毕，无法继续添加任务';
+    end if;
+end;
+
+-- 测试案例
+# insert into repairtask
+#     (repairitem, needComponent, pricePerComponent, totalComponentPrice, rai, createTime, updateTime, isComplete)
+# values ('发动机维修','发动机',10000,20000,1,now(),now(),0);
+# SHOW TRIGGERS;
+
+-- 设置maintenanceDispatchOrder的触发器
+create trigger LimitPublishDispatchOrder before insert on maintenancedispatchorder
+for each row
+BEGIN
+    if (exists(select * from repairtask where repairtask.riid = new.riid and repairtask.isComplete = 1)) then
+        SIGNAL SQLSTATE '45000' set MESSAGE_TEXT = '该维修任务已经完成，无法继续派发派工单';
+    end if;
+end;
+
+# -- 测试案例
+# insert into maintenancedispatchorder
+# (workLength, pricePerhour, riid, empId, empType, isComplete, createTime, updateTime)
+# values (1,100,1,16,2,0,now(),now());
+
+
+

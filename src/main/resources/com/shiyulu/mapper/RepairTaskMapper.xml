@@ -55,4 +55,9 @@
         select count(*) from repairtask where repairtask.rai = #{rai} and repairtask.isComplete = 1
     </select>
 
+    <select id="CalculateLaborCostOnriid" resultType="double">
+        select sum(workLength*maintenancedispatchorder.pricePerhour) from repairtask inner join maintenancedispatchorder on repairtask.riid = maintenancedispatchorder.riid
+        where repairtask.riid = #{riid}
+    </select>
+
 </mapper>

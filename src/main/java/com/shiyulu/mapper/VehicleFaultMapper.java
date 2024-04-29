@@ -14,4 +14,6 @@ public interface VehicleFaultMapper {
     VehicleFault queryMaintenanceAttorneyByVfi(Integer vfi);
 
     List<VehicleFault> queryMaintenanceInfoByOwnVehicles(List<String> vehicleList, Integer repairStatus);
+
+    List<VehicleFault> listMaintenanceAttorney(Integer maintenanceType, Integer taskClassification, Integer paymentMethod, String vin);
 }

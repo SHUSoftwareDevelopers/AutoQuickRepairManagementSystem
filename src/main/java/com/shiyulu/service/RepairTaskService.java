@@ -8,4 +8,6 @@ public interface RepairTaskService {
     // 车间经理更改维修任务
     public void updateRepairTask(RepairTask repairTask);
     public RepairTask getRepairTaskByRiid(Integer riid);
+    // 仅当一个维修任务完成后，才进行调用
+    public Double calculateLaborCost(Integer riid);
 }
