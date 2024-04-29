@@ -1,10 +1,12 @@
 package com.shiyulu.controller;
 
 import com.github.pagehelper.Page;
+import com.shiyulu.mapper.EmpMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.*;
 import com.shiyulu.service.impl.EmpServiceImpl;
 import com.shiyulu.utils.ThreadLocalUtil;
+import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ import java.util.Map;
 public class EmpController {
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private EmpMapper empMapper;
     @Autowired
     private EmpService empService;
     @Autowired
@@ -57,8 +61,33 @@ public class EmpController {
         return Result.success();
     }
 
+    //Wang:修改增加员工接口
+    @PostMapping("/addEmp")
+    public Result addEmp1(@Pattern(regexp = "^\\S{3,16}$") String account,
+                          @Pattern(regexp = "^\\S{5,16}$") String password,
+                          String username,
+                          String phone,
+                          Integer userType,
+                          String trueName,
+                          Integer empType) {
+        User user = commonService.findByAccount(account);
+        if(user == null){
+            commonService.addUser(account, password, username, trueName, userType);
+            user = commonService.findByAccount(account);
+            user.setPhone(phone);
+            commonService.updateInfo(user);
+            Integer id = empMapper.findIdByAccount(account);
+            Emp emp = new Emp();
+            emp.setEmpId(id);
+            emp.setEmpType(empType);
+            empService.updateEmp(emp);
+            return Result.success();
+        }
+        return Result.error("该账号已被占用！");
+    }
+
     // 员工账号所有者查询自己的信息
-    @GetMapping("/queryInfo")
+    @GetMapping("/queryMyInfo")
     public Result queryInfo() {
         Map<String, Object> map = ThreadLocalUtil.get();
         String account = (String) map.get("account");

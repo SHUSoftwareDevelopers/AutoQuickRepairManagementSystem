@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 public class VehicleFault {
     @NotEmpty
     private Integer vfi;
-    private Integer maintenanceType;
-    private Integer taskClassification;
-    private Integer paymentMethod;
+    private String maintenanceType; //0 普通  1 加急
+    private String taskClassification; //0 大修  1 中修  2 小修
+    private String paymentMethod; //0 自付  1 三包  2 索赔
     @NotEmpty
     private String vin;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

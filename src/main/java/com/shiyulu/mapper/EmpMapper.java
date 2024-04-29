@@ -3,6 +3,7 @@ package com.shiyulu.mapper;
 import com.shiyulu.pojo.Emp;
 import com.shiyulu.pojo.VehicleFault;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -16,4 +17,7 @@ public interface EmpMapper {
     Emp queryMyInfo(String account);
 
     void addMaintenanceAttorney(VehicleFault vehicleFault);
+
+    @Select("select empId from emp where account=#{account}")
+    Integer findIdByAccount(String account);
 }

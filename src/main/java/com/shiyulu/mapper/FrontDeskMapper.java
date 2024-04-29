@@ -5,6 +5,7 @@ import com.shiyulu.pojo.ClientUser;
 import com.shiyulu.pojo.Vehicle;
 import com.shiyulu.pojo.VehicleAndOwner;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -28,4 +29,7 @@ public interface FrontDeskMapper {
     List<VehicleAndOwner> queryAllCarInfo(Integer vehicleType, String vehicleColor);
 
     Client queryClientById(Integer clientId);
+
+    @Select("select vin from vehicle")
+    List<String> getVinList();
 }

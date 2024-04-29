@@ -11,7 +11,6 @@ import java.util.List;
 @Mapper
 public interface ClientMapper {
     //查询全部的客户信息，主要用于后台展示
-
     List<Client> selectAllClientInfo(String clientName, Integer clientType);
 
     //根据客户ID查询某个客户的信息

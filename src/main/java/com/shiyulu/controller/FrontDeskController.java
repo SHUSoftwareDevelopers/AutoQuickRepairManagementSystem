@@ -1,11 +1,14 @@
 package com.shiyulu.controller;
 
+import com.shiyulu.mapper.FrontDeskMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
 import com.shiyulu.service.FrontDeskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -15,6 +18,8 @@ public class FrontDeskController {
     private ClientService clientService;
     @Autowired
     private FrontDeskService frontDeskService;
+    @Autowired
+    private FrontDeskMapper frontDeskMapper;
     // 新增某个客户名下的车辆
     @PostMapping("/addCar")
     public Result addCar(@RequestBody Vehicle vehicle) {
@@ -84,5 +89,11 @@ public class FrontDeskController {
         return Result.success(pageBean);
     }
 
+    //获取所有车辆的vin
+    @GetMapping("/getVinList")
+    public Result getVinList(){
+        List<String> vins = frontDeskMapper.getVinList();
+        return Result.success(vins);
+    }
 
 }

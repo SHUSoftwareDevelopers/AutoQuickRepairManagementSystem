@@ -35,7 +35,6 @@
         where clientId = #{clientId}
     </update>
 
-<<<<<<< HEAD
     <select id="selectAllClientInfo" resultType="com.shiyulu.pojo.Client">
         select * from client
         <where>
@@ -77,10 +76,8 @@
             </if>
         </where>
     </select>
-=======
+
     <select id="queryClientInfoByAccount" resultType="com.shiyulu.pojo.Client">
         SELECT * FROM client WHERE account = #{account}
     </select>
-
->>>>>>> main
 </mapper>
