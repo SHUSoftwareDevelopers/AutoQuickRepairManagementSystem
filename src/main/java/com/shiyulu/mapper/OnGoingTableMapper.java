@@ -19,4 +19,6 @@ public interface OnGoingTableMapper {
     OnGoingTable getOnGoingTableBymdoid(Integer mdoid);
 
     List<OnGoingTable> empQueryOnGoingTable(Integer empId, Integer status);
+
+    List<OnGoingTable> listOnGoingTableByMdoid(Integer mdoid);
 }

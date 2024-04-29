@@ -4,6 +4,7 @@ import com.shiyulu.mapper.FrontDeskMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
 import com.shiyulu.service.FrontDeskService;
+import com.shiyulu.service.VehicleFaultService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,10 @@ public class FrontDeskController {
     private FrontDeskService frontDeskService;
     @Autowired
     private FrontDeskMapper frontDeskMapper;
+    @Autowired
+    private VehicleFaultService vehicleFaultService;
+
+
     // 新增某个客户名下的车辆
     @PostMapping("/addCar")
     public Result addCar(@RequestBody Vehicle vehicle) {
@@ -94,6 +99,16 @@ public class FrontDeskController {
     public Result getVinList(){
         List<String> vins = frontDeskMapper.getVinList();
         return Result.success(vins);
+    }
+
+    // 分页查询所有车辆故障信息
+    @GetMapping("/listMaintenanceAttorney")
+    public Result listMaintenanceAttorney(@RequestParam(defaultValue = "1") Integer page,
+                                          @RequestParam(defaultValue = "10") Integer pageSize,
+                                          Integer maintenanceType, Integer taskClassification, Integer paymentMethod,String vin) {
+        log.info("分页查询所有车辆故障信息，参数为{},{},{},{},{},{}",page,pageSize,maintenanceType,taskClassification,paymentMethod,vin);
+        PageBean pageBean = vehicleFaultService.listMaintenanceAttorney(page,pageSize,maintenanceType,taskClassification,paymentMethod,vin);
+        return Result.success(pageBean);
     }
 
 }

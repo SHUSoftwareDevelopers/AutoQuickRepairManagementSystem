@@ -34,5 +34,4 @@ public class RepairAuthorization {
     private LocalDateTime updateTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime estDelivTime;
-    private String currentRepairStatus;
 }

@@ -4,8 +4,10 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.shiyulu.mapper.ClientMapper;
 import com.shiyulu.mapper.CommonMapper;
+import com.shiyulu.mapper.VehicleFaultMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
+import com.shiyulu.service.VehicleFaultService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class ClientServiceImpl implements ClientService {
     private  ClientMapper clientMapper;
     @Autowired
     private CommonMapper commonMapper;
+    @Autowired
+    private VehicleFaultMapper vehicleFaultMapper;
 
     //分页查询所有的客户信息
     @Override
@@ -154,5 +158,22 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client queryClientInfoByAccount(String account) {
         return clientMapper.queryClientInfoByAccount(account);
+    }
+
+    @Override
+    public PageBean queryMyVehicleFaultInfo(Integer page, Integer pageSize, Integer clientId, Integer repairStatus) {
+        //0. 提取该客户拥有的所有车辆
+        List<Vehicle> vehicleList = clientMapper.selectVehicleInfoByClientId(clientId);
+        // 提取所有车架号
+        List<String> vins = vehicleList.stream().map(Vehicle::getVin).toList();
+        log.info("客户：{}, vins:{}",clientId, vins);
+        //1. 设置分页参数
+        PageHelper.startPage(page,pageSize);
+        //2. 执行查询, 此时已经是分页查询结果的封装了
+        List<VehicleFault> vehicleFaultList = vehicleFaultMapper.queryMaintenanceInfoByOwnVehicles(vins, repairStatus);
+        Page<VehicleFault> p = (Page<VehicleFault>) vehicleFaultList;
+        //3. 封装PageBean对象
+        PageBean pageBean = new PageBean(p.getTotal(),p.getResult());
+        return pageBean;
     }
 }

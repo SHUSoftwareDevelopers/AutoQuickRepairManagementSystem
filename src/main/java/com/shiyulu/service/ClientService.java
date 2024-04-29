@@ -25,4 +25,6 @@ public interface ClientService {
     PageBean queryOwnCar(Integer page, Integer pageSize, String vehicleColor, String vehicleType, Integer clientId);
     // 根据 account 查询对应客户信息
     Client queryClientInfoByAccount(String account);
+
+    PageBean queryMyVehicleFaultInfo(Integer page, Integer pageSize, Integer clientId, Integer repairStatus);
 }

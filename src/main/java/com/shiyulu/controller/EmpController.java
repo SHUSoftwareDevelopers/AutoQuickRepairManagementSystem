@@ -37,6 +37,10 @@ public class EmpController {
     private  MaintenanceDispatchOrderService maintenanceDispatchOrderService;
     @Autowired
     private OnGoingTableService onGoingTableService;
+    @Autowired
+    private ClientService clientService;
+    @Autowired
+    private MaintenanceProgressService maintenanceProgressService;
 
     // 查询数据表中是否有这条数据
     private boolean isExist(String account) {
@@ -126,7 +130,7 @@ public class EmpController {
         else return Result.error("没有对应的员工！");
     }
 
-    // 业务员/经理 添加维修车辆的维修信息，添加了维修信息即表明一个总的维修任务
+    // 业务员/经理 添加维修车辆的维修信息，添加了维修信息即表明接受了一个总的维修任务
     @PostMapping("/addMaintenanceAttorney")
     public Result addMaintenanceAttorney(@RequestBody VehicleFault vehicleFault) {
         Vehicle vehicle = frontDeskService.queryCarByVin(vehicleFault.getVin());
@@ -134,6 +138,7 @@ public class EmpController {
             log.info("不存在的车辆：{}，为此车辆添加故障信息失败！", vehicleFault.getVin());
             return Result.error("不存在的车辆，为此车辆添加故障信息失败！");
         } else {
+            vehicleFault.setRepairStatus(0);
             log.info("为车辆：{}添加故障信息：{}", vehicleFault.getVin(), vehicleFault);
             vehicleFaultService.addMaintenanceAttorney(vehicleFault);
             return Result.success();
@@ -173,8 +178,8 @@ public class EmpController {
             return Result.error("车辆与客户的从属关系不存在，生成维修委托书失败！");
         }
         else if(repairAuthorization1 != null) {
-            log.info("已存在的维修委托书号：{}，生成维修委托书失败！", repairAuthorization.getRai());
-            return Result.error("已存在的维修委托书号，生成维修委托书失败！");
+            log.info("车辆故障号：{} 已存在对应的维修委托书号：{}，无法再次生成维修委托书！",repairAuthorization.getVfi(), repairAuthorization.getRai());
+            return Result.error("已存在车辆故障对应的维修委托书，生成维修委托书失败！");
         }
         else {
             log.info("为维修任务号：{}生成维修委托书：{}，添加进数据库", repairAuthorization.getVfi(), repairAuthorization);
@@ -239,7 +244,7 @@ public class EmpController {
         }
     }
 
-    // 经理分页查询维修分配单，可以指定分页参数该分配单此时是否被分配
+    // 经理/员工分页联表查询维修分配单和维修任务，可以指定分页参数该分配单此时是否被分配
     @GetMapping("/queryDispatchOrder")
     public Result queryDispatchOrder(@RequestParam(defaultValue = "1") Integer page,
                                      @RequestParam(defaultValue = "10") Integer pageSize,
@@ -412,13 +417,20 @@ public class EmpController {
                 log.info("员工: {} 对任务进度号：{} 的状态修改为：{} ！",empId,onGoingTable.getOgid(), onGoingTable.getStatus());
             }
             onGoingTableService.updateOnGoingTable(onGoingTable);
-
             MaintenanceDispatchOrder maintenanceDispatchOrder = maintenanceDispatchOrderService.getDispatchOrderBymdoId(onGoingTable1.getMdoid());
             boolean IsFinish =  maintenanceDispatchOrderService.checkRepairTaskIsFinish(maintenanceDispatchOrder.getRiid());
-            if(IsFinish) {
+            if(IsFinish) {  //一个repairTask完成后需要置字段isComplete为1，并且需要计算维修委托书中的维修费用
                 RepairTask repairTask = repairTaskService.getRepairTaskByRiid(maintenanceDispatchOrder.getRiid());
                 repairTask.setIsComplete(1);
                 repairTaskService.updateRepairTask(repairTask);
+                // 计算维修费用
+                Double partsCost = repairTask.getTotalComponentPrice();
+                Double laborCost = repairTaskService.calculateLaborCost(repairTask.getRiid());
+                // 将费用更新至维修委托书中(费用递增)
+                Integer rai = repairTask.getRai();
+                RepairAuthorization repairAuthorization = repairAuthorizationService.getRepairAuthorizationByRai(rai);
+                repairAuthorization.setTotalRepairCost(repairAuthorization.getTotalRepairCost() + partsCost + laborCost);
+                repairAuthorizationService.updateRepairAuthorization(repairAuthorization);
             }
             return Result.success();
         }
@@ -481,6 +493,21 @@ public class EmpController {
         log.info("员工：{}分页查询自己的任务记录，参数为{},{},{}", empId, page, pageSize,status);
         PageBean pageBean = onGoingTableService.empQueryOnGoingTable(page, pageSize, empId,status);
         return Result.success(pageBean);
+    }
+
+    //前台/经理查询某个车辆故障的维修进度
+    @GetMapping("/empQueryMaintenanceProgress")
+    public Result empQueryMaintenanceProgress(Integer vfi) {
+        VehicleFault vehicleFault = clientService.queryVehicleFaultInfoByVFId(vfi);
+        if(vehicleFault == null) {
+            log.info("不存在的车辆故障号：{}，查询维修进度失败！", vfi);
+            return Result.error("不存在的车辆故障号，查询维修进度失败！");
+        }
+        else {
+            log.info("查询车辆故障号：{}的维修进度", vfi);
+            MaintenanceProgress maintenanceProgress = maintenanceProgressService.queryMaintenanceProgress(vfi);
+            return Result.success(maintenanceProgress);
+        }
     }
 
 }
