@@ -93,7 +93,7 @@ create table repairAuthorization
 ) comment '维修委托书';
 
 # 维修委托内容（维修项目）
-create table repairtaskre
+create table repairtask
 (
     riid int unsigned auto_increment primary key comment '维修项目编号',
     repairitem varchar(300) comment '维修项目',
