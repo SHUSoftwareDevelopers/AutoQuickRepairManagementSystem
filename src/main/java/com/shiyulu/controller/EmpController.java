@@ -4,6 +4,8 @@ import com.github.pagehelper.Page;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.*;
 import com.shiyulu.service.impl.EmpServiceImpl;
+import com.shiyulu.utils.AliSMSProperties;
+import com.shiyulu.utils.SMSUtils;
 import com.shiyulu.utils.ThreadLocalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,10 @@ public class EmpController {
     private MaintenanceProgressService maintenanceProgressService;
     @Autowired
     private BillsService billsService;
+    @Autowired
+    private AliSMSProperties aliSMSProperties;  //SMS常量注解
+    @Autowired
+    private SMSUtils smsUtils;  //阿里云短信工具类
 
     // 查询数据表中是否有这条数据
     private boolean isExist(String account) {
@@ -126,8 +132,18 @@ public class EmpController {
         if (vehicleFault1 == null) {
             log.info("不存在的维修任务：{}，更新维修任务失败！", vehicleFault.getVfi());
             return Result.error("不存在的维修任务，更新维修任务失败！");
-        } else {
+        }
+        else {
             log.info("维修任务号：{} 更新维修任务：{}", vehicleFault.getVfi(), vehicleFault);
+            if(vehicleFault.getRepairStatus() == 1 && vehicleFault1.getRepairStatus() == 0) {   //此车辆故障维修结束，发送短信提醒客户缴费
+                Vehicle vehicle = frontDeskService.queryCarByVin(vehicleFault1.getVin());
+                Client client = clientService.queryClientInfoById(vehicle.getClientId());
+                User user = commonService.findByAccount(client.getAccount());
+                String smsClientName = user.getUsername();
+                smsClientName = smsClientName.replaceAll("\\s+", "");
+                //发送短信提醒客户
+                smsUtils.sendMessage(aliSMSProperties.getSMSSIGNNAME(),aliSMSProperties.getSMSTEMPLATECODE(),user.getPhone(),smsClientName,vehicle.getLicense(),vehicleFault.getVfi());
+            }
             vehicleFaultService.updateMaintenanceAttorney(vehicleFault);
             return Result.success();
         }
@@ -491,6 +507,14 @@ public class EmpController {
         log.info("分页查询支付账单，参数为{},{},{}", page, pageSize, clientId);
         PageBean pageBean = billsService.listBills(page, pageSize, clientId);
         return Result.success(pageBean);
+    }
+
+    @PostMapping("/testSMS")
+    public Result testSMS() {
+        log.info("测试短信发送");
+        smsUtils.sendMessage(aliSMSProperties.getSMSSIGNNAME(),aliSMSProperties.getSMSTEMPLATECODE(),
+                "18018641963","shiyulu", "沪C-SJ888",6);
+        return Result.success();
     }
 
 }

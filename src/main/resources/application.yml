@@ -15,10 +15,12 @@ mybatis:
     map-underscore-to-camel-case: true
 server:
   port: 8011
-#aliyun:
-#  sms:
-#    sms-access-key-id:
-#    sms-access-key-secret:
-#    sms-endpoint:
-#    sms-template-code:
-#    sms-sign-name:
+
+# 阿里云SMS const变量
+aliyun:
+  sms:
+    SMSACCESSKEYID: LTAI5tSnZJZiUeLsaGZy1Gua
+    SMSACCESSKEYSECRET: vXLbuCno2pRBXo59qv4AoytTqVxXux
+    SMSENDPOINT: cn-hangzhou
+    SMSTEMPLATECODE: SMS_465965710
+    SMSSIGNNAME: 汽车快修AQRepair
