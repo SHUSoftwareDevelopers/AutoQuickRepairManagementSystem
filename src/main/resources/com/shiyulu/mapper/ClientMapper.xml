@@ -13,31 +13,71 @@
         </where>
     </select>
 
-    <!-- 客户自行修改client表中的信息时无法修改折扣率和所属账号    -->
-    <update id="updateClientInfo">
+    <update id="updateInfo">
         update client
         <set>
-            <if test="clientName != null and clientName != '' ">
+            <if test="clientName != null and clientName != ''">
                 clientName = #{clientName},
             </if>
-
             <if test="clientType != null">
                 clientType = #{clientType},
             </if>
-
-            <if test="businessContact != null and businessContact != '' ">
+            <if test="discountRate != null">
+                discountRate = #{discountRate},
+            </if>
+            <if test="businessContact != null and businessContact != ''">
                 businessContact = #{businessContact},
             </if>
-
-            <if test="businessTele != null and businessTele != '' ">
-                businessTele = #{businessTele},
+            <if test="businessTele != null and businessTele != ''">
+                businessTele = #{businessTele}
             </if>
         </set>
-        where client.account = #{account}
+        where clientId = #{clientId}
     </update>
+
+    <select id="selectAllClientInfo" resultType="com.shiyulu.pojo.Client">
+        select * from client
+        <where>
+            <if test="clientName!=null and clientName!= ''">
+                client.clientName like CONCAT('%', #{clientName}, '%')
+            </if>
+            <if test="clientType!=null">
+                and client.clientType = #{clientType}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryOwnCar" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle
+        <where>
+            <if test="vehicleType!=null and vehicleType!=''">
+                vehicle.vehicleType = #{vehicleType}
+            </if>
+            <if test="vehicleColor!=null and vehicleColor!=''">
+                and vehicle.vehicleColor = #{vehicleColor}
+            </if>
+            <if test="clientId!=null">
+                and vehicle.clientId = #{clientId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllVehicleInfo" resultType="com.shiyulu.pojo.Vehicle">
+        select * from vehicle
+        <where>
+            <if test="vehicleType!=null and vehicleType!=''">
+                vehicle.vehicleType = #{vehicleType}
+            </if>
+            <if test="vehicleColor!=null and vehicleColor!=''">
+                and vehicle.vehicleColor = #{vehicleColor}
+            </if>
+            <if test="clientId!=null">
+                and vehicle.clientId = #{clientId}
+            </if>
+        </where>
+    </select>
 
     <select id="queryClientInfoByAccount" resultType="com.shiyulu.pojo.Client">
         SELECT * FROM client WHERE account = #{account}
     </select>
-
 </mapper>

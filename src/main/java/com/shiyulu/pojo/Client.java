@@ -10,13 +10,11 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @Data
 public class Client {
-    @NotEmpty
     private Integer clientId;
     private String clientName;
     private Integer clientType;
     private Double discountRate;
     private String businessContact;
     private String businessTele;
-    @NotEmpty
     private String account;
 }

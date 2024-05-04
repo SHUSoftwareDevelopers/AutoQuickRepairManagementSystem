@@ -1,5 +1,6 @@
 package com.shiyulu.controller;
 
+import com.shiyulu.mapper.FrontDeskMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
 import com.shiyulu.service.FrontDeskService;
@@ -7,6 +8,8 @@ import com.shiyulu.service.VehicleFaultService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -17,7 +20,10 @@ public class FrontDeskController {
     @Autowired
     private FrontDeskService frontDeskService;
     @Autowired
+    private FrontDeskMapper frontDeskMapper;
+    @Autowired
     private VehicleFaultService vehicleFaultService;
+
 
     // 新增某个客户名下的车辆
     @PostMapping("/addCar")
@@ -35,8 +41,8 @@ public class FrontDeskController {
         // 客户车号VIN重复，MySQL自动抛出异常
     }
     // 删除某个客户名下的车辆，注意级联
-    @DeleteMapping("/deleteCar")
-    public Result deleteCar(String vin) {
+    @DeleteMapping("/deleteCar/{vin}")
+    public Result deleteCar(@PathVariable String vin) {
         Vehicle vehicle = frontDeskService.queryCarByVin(vin);
         if(vehicle == null) {
             log.info("不存在的车辆：{}，删除失败！",vin);
@@ -88,6 +94,13 @@ public class FrontDeskController {
         return Result.success(pageBean);
     }
 
+    //获取所有车辆的vin
+    @GetMapping("/getVinList")
+    public Result getVinList(){
+        List<String> vins = frontDeskMapper.getVinList();
+        return Result.success(vins);
+    }
+
     // 分页查询所有车辆故障信息
     @GetMapping("/listMaintenanceAttorney")
     public Result listMaintenanceAttorney(@RequestParam(defaultValue = "1") Integer page,
@@ -97,6 +110,5 @@ public class FrontDeskController {
         PageBean pageBean = vehicleFaultService.listMaintenanceAttorney(page,pageSize,maintenanceType,taskClassification,paymentMethod,vin);
         return Result.success(pageBean);
     }
-
 
 }

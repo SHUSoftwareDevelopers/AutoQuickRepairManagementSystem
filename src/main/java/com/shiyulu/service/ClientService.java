@@ -7,10 +7,10 @@ import com.shiyulu.pojo.VehicleFault;
 
 public interface ClientService {
     //分页查询所有的客户信息
-    PageBean queryAllClientInfo(Integer page, Integer pageSize);
+    PageBean queryAllClientInfo(Integer page, Integer pageSize, String clientName, Integer clientType);
     //分页查询所有的客户车辆信息
     Client queryClientInfoById(Integer clientId);
-    PageBean queryAllVehicleInfo(Integer page, Integer pageSize);
+    PageBean queryAllVehicleInfo(Integer page, Integer pageSize, String vehicleColor, String vehicleType, Integer clientId);
     //根据客户ID查询客户车辆信息,客户车可能有多辆
     PageBean queryVehicleInfoByClientId(Integer page, Integer pageSize,Integer clientId);
     //分页查询所有的客户维修车辆信息
@@ -19,9 +19,10 @@ public interface ClientService {
     VehicleFault queryVehicleFaultInfoByVFId(Integer vehicleFaultId);
     //根据客户ID分页查询客户的所有维修车辆信息
     public PageBean queryVehicleFaultInfoByClientId(Integer page, Integer pageSize,Integer clientId);
+    
+    void updateInfo(Client client);
 
-    // 此时登录的账号更新自己的信息
-    void updateClientInfo(Client client);
+    PageBean queryOwnCar(Integer page, Integer pageSize, String vehicleColor, String vehicleType, Integer clientId);
     // 根据 account 查询对应客户信息
     Client queryClientInfoByAccount(String account);
 

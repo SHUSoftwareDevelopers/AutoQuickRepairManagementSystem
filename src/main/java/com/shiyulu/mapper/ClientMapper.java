@@ -11,16 +11,14 @@ import java.util.List;
 @Mapper
 public interface ClientMapper {
     //查询全部的客户信息，主要用于后台展示
-    @Select("select * from client")
-    List<Client> selectAllClientInfo();
+    List<Client> selectAllClientInfo(String clientName, Integer clientType);
 
     //根据客户ID查询某个客户的信息
     @Select("select * from client where clientId = #{clientId}")
     Client selectClientInfoById(Integer clientId);
 
     //查询全部客户的车辆信息，主要用于后台展示
-    @Select("select * from vehicle")
-    List<Vehicle> selectAllVehicleInfo();
+    List<Vehicle> selectAllVehicleInfo(String vehicleColor, String vehicleType, Integer clientId);
 
     //根据客户ID查询某个客户的车辆信息
     @Select("select * from vehicle where clientId = #{clientId}")
@@ -41,7 +39,14 @@ public interface ClientMapper {
     @Select("select * from vehiclefault where vfi = #{vehicleFaultId}")
     VehicleFault selectVehicleFaultInfoByVFId(Integer vehicleFaultId);
 
-    void updateClientInfo(Client client);
+    void updateInfo(Client client);
+
+    //根据account找ID
+    @Select("select clientId from client where account=#{account}")
+    Integer findIdByAccount(String account);
+
+    List<Vehicle> queryOwnCar(Integer clientId,String vehicleColor,String vehicleType);
 
     Client queryClientInfoByAccount(String account);
+
 }
