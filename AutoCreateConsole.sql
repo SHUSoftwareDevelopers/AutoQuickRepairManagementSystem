@@ -140,19 +140,33 @@ create table onGoingTable
 
 # **********后续对于表的修改**********
 alter table repairtask
-add isComplete boolean;
+    add isComplete boolean;
 
 # 0代表进行中，1代表未完成
 alter table vehicleFault add repairStatus tinyint;
-
 alter table repairAuthorization DROP currentRepairStatus;
+alter table vehicleFault modify whetherPay tinyint;
+
+# 客户账单表
+create table bills
+(
+    billId int unsigned primary key auto_increment comment '账单id号',
+    clientId int unsigned comment '客户id',
+    vfi int unsigned comment 'vehicle fault id',
+    discountRate double comment '支付时的折扣率',
+    paymentMethod tinyint comment '结算方式',
+    payment double comment '实际付款金额',
+    payTime datetime comment '支付时间',
+    foreign key (clientId) references client(clientId),
+    foreign key (vfi) references vehicleFault(vfi)
+) comment '客户支付账单表';
 
 -- 设置repairTask的触发器
 create trigger LimitPublishTask before insert on repairtask # 在插入操作前检查
-for each row
+    for each row
 BEGIN
     if exists(select * from vehicleFault inner join repairAuthorization on vehicleFault.vfi = repairAuthorization.vfi
-             where repairAuthorization.rai = new.rai and vehicleFault.repairStatus = 1) then
+              where repairAuthorization.rai = new.rai and vehicleFault.repairStatus = 1) then
         SIGNAL SQLSTATE '45000' set MESSAGE_TEXT = '该车辆故障已经维修完毕，无法继续添加任务';
     end if;
 end;
@@ -165,7 +179,7 @@ end;
 
 -- 设置maintenanceDispatchOrder的触发器
 create trigger LimitPublishDispatchOrder before insert on maintenancedispatchorder
-for each row
+    for each row
 BEGIN
     if (exists(select * from repairtask where repairtask.riid = new.riid and repairtask.isComplete = 1)) then
         SIGNAL SQLSTATE '45000' set MESSAGE_TEXT = '该维修任务已经完成，无法继续派发派工单';
@@ -176,6 +190,48 @@ end;
 # insert into maintenancedispatchorder
 # (workLength, pricePerhour, riid, empId, empType, isComplete, createTime, updateTime)
 # values (1,100,1,16,2,0,now(),now());
+
+-- 设置更新repairTask的零件费用后repairAuthorization同步更新的触发器
+create trigger RepairFeeSynchronous after update on repairtask
+    for each row
+BEGIN
+    if (old.totalComponentPrice != new.totalComponentPrice) #针对已经完成的任务的价格更新
+        and old.isComplete = 1 and new.isComplete = 1 then
+        update repairAuthorization
+        set totalRepairCost = totalRepairCost + (new.totalComponentPrice-old.totalComponentPrice)
+        where rai = new.rai;
+    end if;
+end;
+
+# drop trigger RepairFeeSynchronous;
+
+-- 测试案例
+# update repairtask
+# set needComponent = '高压空气，打光剂',pricePerComponent = 50, totalComponentPrice = 50
+# where riid = 2;
+
+-- 设置更新maintenanceDispatchOrder的工时和工时单价后repairAuthorization同步更新的触发器
+create trigger LaborFeeSynchronous after update on maintenancedispatchorder
+    for each row
+BEGIN
+    if (new.workLength != old.workLength or new.pricePerhour != old.pricePerhour)
+        and old.isComplete = 1 and new.isComplete = 1
+        and exists(select * from repairtask where repairtask.riid = new.riid and repairtask.isComplete = 1)  then
+        update repairAuthorization  # 在repairAuthorization表中更新人工费
+        set totalRepairCost = totalRepairCost + (new.pricePerhour*new.workLength - old.pricePerhour*old.workLength)
+        where repairAuthorization.rai in (select rai from repairtask inner join maintenanceDispatchOrder on repairtask.riid = maintenanceDispatchOrder.riid
+                                          where mdoid = new.mdoid);
+    end if;
+end;
+# drop trigger LaborFeeSynchronous;
+
+-- 测试案例
+# update maintenanceDispatchOrder
+# set workLength = 1,pricePerhour = 20
+# where mdoid = 1;
+
+
+
 
 
 
