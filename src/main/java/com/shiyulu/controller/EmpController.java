@@ -496,8 +496,8 @@ public class EmpController {
     }
 
     //前台/经理查询某个车辆故障的维修进度
-    @GetMapping("/empQueryMaintenanceProgress")
-    public Result empQueryMaintenanceProgress(Integer vfi) {
+    @GetMapping("/empQueryMaintenanceProgress/{vfi}")
+    public Result empQueryMaintenanceProgress(@PathVariable Integer vfi) {
         VehicleFault vehicleFault = clientService.queryVehicleFaultInfoByVFId(vfi);
         if(vehicleFault == null) {
             log.info("不存在的车辆故障号：{}，查询维修进度失败！", vfi);
@@ -509,5 +509,4 @@ public class EmpController {
             return Result.success(maintenanceProgress);
         }
     }
-
 }
