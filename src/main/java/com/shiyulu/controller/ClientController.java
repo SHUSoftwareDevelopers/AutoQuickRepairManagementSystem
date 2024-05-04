@@ -3,12 +3,10 @@ package com.shiyulu.controller;
 import com.shiyulu.mapper.ClientMapper;
 import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
-
 import com.shiyulu.service.CommonService;
-
 import com.shiyulu.service.FrontDeskService;
 import com.shiyulu.service.MaintenanceProgressService;
-
+import com.shiyulu.service.*;
 import com.shiyulu.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 @Slf4j
 @RestController
@@ -31,6 +30,10 @@ public class ClientController {
     private FrontDeskService frontDeskService;
     @Autowired
     private MaintenanceProgressService maintenanceProgressService;
+    @Autowired
+    private VehicleFaultService vehicleFaultService;
+    @Autowired
+    private BillsService billsService;
 
     @Autowired
     private ClientMapper clientMapper;
@@ -231,6 +234,47 @@ public class ClientController {
             MaintenanceProgress maintenanceProgress = maintenanceProgressService.queryMaintenanceProgress(vfi);
             return Result.success(maintenanceProgress);
         }
+    }
+
+    @PostMapping("/payBills")
+    public Result payBills(@RequestBody Bills bills) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        Client client = clientService.queryClientInfoByAccount(account);
+        VehicleFault vehicleFault = vehicleFaultService.queryMaintenanceAttorneyByVfi(bills.getVfi());
+        if(vehicleFault == null) {
+            log.info("客户：{}请求支付车辆故障：{}的费用，但该订单不存在",client.getClientId(),bills.getVfi());
+            return Result.error("该订单不存在！");
+        }
+        else if(vehicleFault.getWhetherPay() == 1) {
+            log.info("客户：{}请求支付车辆故障：{}的费用，但该订单已经支付",client.getClientId(),bills.getVfi());
+            return Result.error("该订单已经支付！");
+        }
+        else if(vehicleFault.getRepairStatus() == 0) {
+            log.info("客户：{}请求支付车辆故障：{}的费用，但该订单尚未完成",client.getClientId(),bills.getVfi());
+            return Result.error("该订单尚未完成！");
+        }
+        else {
+            if (frontDeskService.checkCarBelong(vehicleFault.getVin(), client.getClientId())) {
+                log.info("客户：{}为车辆故障：{}付款",client.getClientId(),bills.getVfi());
+                billsService.addBills(bills);
+                return Result.success();
+            }
+            else {
+                log.info("客户：{}与车辆故障：{}的归属关系不存在！",client.getClientId(),bills.getVfi());
+                return Result.error("客户与车辆故障的归属关系不存在！");
+            }
+        }
+    }
+
+    @GetMapping("/listMyBills")
+    public Result listMyBills(@RequestParam(defaultValue = "1") Integer page,
+                              @RequestParam(defaultValue = "10") Integer pageSize) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String account = (String) map.get("account");
+        Client client = clientService.queryClientInfoByAccount(account);
+        PageBean pageBean = billsService.listBills(page,pageSize,client.getClientId());
+        return Result.success(pageBean);
     }
 
 }

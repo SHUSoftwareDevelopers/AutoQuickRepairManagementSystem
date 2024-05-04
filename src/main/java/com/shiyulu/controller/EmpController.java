@@ -41,6 +41,8 @@ public class EmpController {
     private ClientService clientService;
     @Autowired
     private MaintenanceProgressService maintenanceProgressService;
+    @Autowired
+    private BillsService billsService;
 
     // 查询数据表中是否有这条数据
     private boolean isExist(String account) {
@@ -139,6 +141,7 @@ public class EmpController {
             return Result.error("不存在的车辆，为此车辆添加故障信息失败！");
         } else {
             vehicleFault.setRepairStatus(0);
+            vehicleFault.setWhetherPay(0);
             log.info("为车辆：{}添加故障信息：{}", vehicleFault.getVin(), vehicleFault);
             vehicleFaultService.addMaintenanceAttorney(vehicleFault);
             return Result.success();
@@ -423,7 +426,7 @@ public class EmpController {
                 RepairTask repairTask = repairTaskService.getRepairTaskByRiid(maintenanceDispatchOrder.getRiid());
                 repairTask.setIsComplete(1);
                 repairTaskService.updateRepairTask(repairTask);
-                // 计算维修费用
+                // 计算维修费abo
                 Double partsCost = repairTask.getTotalComponentPrice();
                 Double laborCost = repairTaskService.calculateLaborCost(repairTask.getRiid());
                 // 将费用更新至维修委托书中(费用递增)
@@ -509,4 +512,14 @@ public class EmpController {
             return Result.success(maintenanceProgress);
         }
     }
+
+    @GetMapping("/listBills")
+    public Result listBills(@RequestParam(defaultValue = "1") Integer page,
+                            @RequestParam(defaultValue = "10") Integer pageSize,
+                            Integer clientId) {
+        log.info("分页查询支付账单，参数为{},{},{}", page, pageSize, clientId);
+        PageBean pageBean = billsService.listBills(page, pageSize, clientId);
+        return Result.success(pageBean);
+    }
+
 }

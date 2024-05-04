@@ -21,6 +21,9 @@ public class VehicleFaultServiceImpl implements VehicleFaultService {
     public void addMaintenanceAttorney(VehicleFault vehicleFault) {
         vehicleFault.setCreateTime(LocalDateTime.now());
         vehicleFault.setUpdateTime(LocalDateTime.now());
+        // 初始化维修和支付状态
+        vehicleFault.setRepairStatus(0);
+        vehicleFault.setWhetherPay(0);
         vehicleFaultMapper.addMaintenanceAttorney(vehicleFault);
     }
 

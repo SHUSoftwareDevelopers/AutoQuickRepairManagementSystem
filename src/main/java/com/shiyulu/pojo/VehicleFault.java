@@ -23,5 +23,8 @@ public class VehicleFault {
     private LocalDateTime createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+    @NotEmpty
     Integer repairStatus;
+    @NotEmpty
+    Integer whetherPay;
 }

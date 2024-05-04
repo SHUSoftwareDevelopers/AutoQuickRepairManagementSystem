@@ -15,3 +15,10 @@ mybatis:
     map-underscore-to-camel-case: true
 server:
   port: 8011
+#aliyun:
+#  sms:
+#    sms-access-key-id:
+#    sms-access-key-secret:
+#    sms-endpoint:
+#    sms-template-code:
+#    sms-sign-name:

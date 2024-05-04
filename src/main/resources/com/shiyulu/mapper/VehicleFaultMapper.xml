@@ -5,8 +5,8 @@
 <mapper namespace="com.shiyulu.mapper.VehicleFaultMapper">
 
     <insert id="addMaintenanceAttorney">
-        insert into vehiclefault (maintenanceType, taskClassification, paymentMethod, vin, createTime, updateTime,repairStatus)
-        values (#{maintenanceType}, #{taskClassification},#{paymentMethod},#{vin},#{createTime},#{updateTime},#{repairStatus})
+        insert into vehiclefault (maintenanceType, taskClassification, paymentMethod, vin, createTime, updateTime,repairStatus,whetherPay)
+        values (#{maintenanceType}, #{taskClassification},#{paymentMethod},#{vin},#{createTime},#{updateTime},#{repairStatus},#{whetherPay})
     </insert>
 
     <update id="updateMaintenanceAttorney">
@@ -38,6 +38,10 @@
 
             <if test="repairStatus != null">
                 repairStatus = #{repairStatus},
+            </if>
+
+            <if test="whetherPay != null">
+                whetherPay = #{whetherPay},
             </if>
         </set>
         where vehiclefault.vfi = #{vfi}
