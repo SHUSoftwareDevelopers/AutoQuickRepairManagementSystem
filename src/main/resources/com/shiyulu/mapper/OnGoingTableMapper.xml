@@ -48,7 +48,8 @@
     </select>
 
     <select id="listOnGoingTableByMdoid" resultType="com.shiyulu.pojo.OnGoingTable">
-        select * from ongoingtable where mdoid = #{mdoid}
+        select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
+        from ongoingtable where mdoid = #{mdoid}
     </select>
 
 </mapper>

@@ -6,6 +6,8 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
  * 短信发送工具类
  */
 @Component
+@Slf4j
 public class SMSUtils {
 	@Autowired
 	private AliSMSProperties aliSMSProperties;
@@ -41,7 +44,9 @@ public class SMSUtils {
 		request.setTemplateParam("{\"name\":\""+name+"\", \"license\":\""+ license +"\", \"vfi\":\""+vfi+"\"}");
 		try {
 			SendSmsResponse response = client.getAcsResponse(request);
-			System.out.println("短信发送成功");
+			log.info(response.toString());
+			log.info(response.getCode());
+			log.info("向" + phoneNumbers + "的短信发送成功！");
 		}catch (ClientException e) {
 			e.printStackTrace();
 		}
