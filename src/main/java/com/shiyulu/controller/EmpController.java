@@ -268,7 +268,7 @@ public class EmpController {
     public Result queryDispatchOrder(@RequestParam(defaultValue = "1") Integer page,
                                      @RequestParam(defaultValue = "10") Integer pageSize,
                                     Integer isAssigned) {
-        log.info("分页查询维修分配单，参数为{},{},{}", page, pageSize,isAssigned);
+        log.info("分页查询维修分配单及其对应的维修任务，参数为{},{},{}", page, pageSize,isAssigned);
         PageBean pageBean = maintenanceDispatchOrderService.queryDispatchOrder(page, pageSize,isAssigned);
         return Result.success(pageBean);
     }

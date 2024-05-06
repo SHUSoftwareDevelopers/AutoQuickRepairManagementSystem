@@ -1,6 +1,7 @@
 package com.shiyulu.mapper;
 
 import com.shiyulu.pojo.MaintenanceDispatchOrder;
+import com.shiyulu.pojo.RiidAndMdoid;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface MaintenanceDispatchOrderMapper {
 
     MaintenanceDispatchOrder getDispatchOrderByriid(Integer riid);
 
-    List<MaintenanceDispatchOrder> queryDispatchOrder(Integer isAssigned);
+    List<RiidAndMdoid> queryDispatchOrder(Integer isAssigned);
 
     Integer checkIsRepairTaskFinish(Integer riid);
 

@@ -7,6 +7,7 @@ import com.shiyulu.mapper.RepairTaskMapper;
 import com.shiyulu.pojo.MaintenanceDispatchOrder;
 import com.shiyulu.pojo.PageBean;
 import com.shiyulu.pojo.RepairTask;
+import com.shiyulu.pojo.RiidAndMdoid;
 import com.shiyulu.service.MaintenanceDispatchOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,8 +61,8 @@ public class MaintenanceDispatchOrderServiceImpl implements MaintenanceDispatchO
         //1. 设置分页参数
         PageHelper.startPage(page,pageSize);
         //2. 执行查询, 此时已经是分页查询结果的封装了
-        List<MaintenanceDispatchOrder> maintenanceDispatchOrderList = maintenanceDispatchOrderMapper.queryDispatchOrder(isAssigned);
-        Page<MaintenanceDispatchOrder> p = (Page<MaintenanceDispatchOrder>) maintenanceDispatchOrderList;
+        List<RiidAndMdoid> maintenanceDispatchOrderList = maintenanceDispatchOrderMapper.queryDispatchOrder(isAssigned);
+        Page<RiidAndMdoid> p = (Page<RiidAndMdoid>) maintenanceDispatchOrderList;
         //3. 封装PageBean对象
         PageBean pageBean = new PageBean(p.getTotal(),p.getResult());
         return pageBean;

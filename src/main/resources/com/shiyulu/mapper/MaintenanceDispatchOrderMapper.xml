@@ -51,8 +51,13 @@
         delete from maintenancedispatchorder where mdoid = #{mdoid}
     </delete>
 
-    <select id="queryDispatchOrder" resultType="com.shiyulu.pojo.MaintenanceDispatchOrder">
-        select * from maintenancedispatchorder
+    <select id="queryDispatchOrder" resultType="com.shiyulu.pojo.RiidAndMdoid">
+        select
+        repairtask.riid,repairtask.repairitem,repairtask.needComponent,repairtask.pricePerComponent,repairtask.totalComponentPrice,
+        repairtask.rai,maintenancedispatchorder.mdoid,maintenancedispatchorder.workLength,maintenancedispatchorder.pricePerhour,
+        maintenancedispatchorder.empId,maintenancedispatchorder.empType,maintenancedispatchorder.isComplete,maintenancedispatchorder.createTime,
+        maintenancedispatchorder.updateTime
+        from repairtask inner join maintenancedispatchorder on repairtask.riid = maintenancedispatchorder.riid
         <where>
             <if test="isAssigned == 0">
                 empId is null
