@@ -9,12 +9,19 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 100MB
+
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+
+# 配置https端口及证书
 server:
   port: 8011
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: shuACM2024
+    key-store-type: PKCS12
 
 # 阿里云SMS const变量
 aliyun:

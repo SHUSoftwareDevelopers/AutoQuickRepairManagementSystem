@@ -1,6 +1,18 @@
-## 汽车维修管理系统SQL表
+# 汽车维修管理系统SQL表
 
-建表语句查看`AutoCreateConsole.sql`，数据查看`AutoSqlData.sql`。
+若本地调试，建表语句请查看本项目`AutoCreateConsole.sql`，建表数据请查看`AutoSqlData.sql`。
+
+本项目已经配置ssl证书，请本地调试的时候以`https`的形式访问。
+
+详细接口文档请参见[PostMan接口文档](https://documenter.getpostman.com/view/32022529/2sA3JGgQBD)。
+
+如果您喜欢本项目，请点个star⭐。
+
+后续可能的更新计划：接入车辆识别模型，加速前台录入信息。
+
+
+
+## 数据库表结构声明
 
 ### 账号登录表
 
@@ -99,7 +111,9 @@
 
 [==4/29已实现==] 使用SQL触发器保证了完成的维修小任务无法继续派发派工单以及完成的车辆故障无法继续布置维修任务。
 
-### 前端添加维修任务思路实现
+
+
+## 前端添加维修任务思路实现
 
 第一步：有一个表格展示VehicleFault的信息
 
