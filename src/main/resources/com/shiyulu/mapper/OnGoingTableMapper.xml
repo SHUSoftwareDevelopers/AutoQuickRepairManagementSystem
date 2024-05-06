@@ -39,8 +39,9 @@
 
     <select id="empQueryOnGoingTable" resultType="com.shiyulu.pojo.OnGoingTable">
         select ogid, mdoid, assignId, receiveId as receivedId, status, createTime, endTime
-        from ongoingtable where receiveId = #{empId}
+        from ongoingtable
         <where>
+            receiveId = #{empId}
             <if test="status != null">
                 and status = #{status}
             </if>

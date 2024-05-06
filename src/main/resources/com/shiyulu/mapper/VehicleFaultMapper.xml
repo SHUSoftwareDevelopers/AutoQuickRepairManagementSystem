@@ -52,12 +52,12 @@
     </select>
 
     <select id="queryMaintenanceInfoByOwnVehicles" resultType="com.shiyulu.pojo.VehicleFault">
-        select * from vehiclefault where vehiclefault.vin in
-        <foreach collection="vehicleList" item="vin" separator="," open="(" close=")">
-            #{vin}
-        </foreach>
+        select * from vehiclefault
+        <where> vehiclefault.vin in
+            <foreach collection="vehicleList" item="vin" separator="," open="(" close=")">
+                #{vin}
+            </foreach>
 
-        <where>
             <if test="repairStatus != null">
                 and repairStatus = #{repairStatus}
             </if>
