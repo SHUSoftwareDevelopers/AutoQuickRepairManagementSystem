@@ -126,10 +126,14 @@ public class ClientController {
                            String vehicleType){
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer clientId = (Integer) map.get("id");
+        String account = (String) map.get("account");
+        Client client = clientService.queryClientInfoByAccount(account);
+        if(client == null) {
+            return Result.error("该客户不存在");
+        }
         PageBean ownVehicles = clientService.queryOwnCar(page,pageSize,vehicleColor,vehicleType,clientId);
         return Result.success(ownVehicles);
     }
-
     //查询全部的客户车辆故障信息，主要用于后台展示
     @GetMapping("/findFault")
     public Result queryAllVehicleFaultInfo(@RequestParam(defaultValue = "1") Integer page,

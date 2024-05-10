@@ -4,6 +4,8 @@ import com.shiyulu.pojo.Client;
 import com.shiyulu.pojo.PageBean;
 import com.shiyulu.pojo.Vehicle;
 
+import java.util.Vector;
+
 public interface FrontDeskService {
 
     void addCar(Vehicle vehicle);

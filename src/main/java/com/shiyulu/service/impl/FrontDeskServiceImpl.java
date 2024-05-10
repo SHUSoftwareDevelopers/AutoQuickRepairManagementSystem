@@ -78,4 +78,5 @@ public class FrontDeskServiceImpl implements FrontDeskService {
     public Client queryClientById(Integer clientId) {
         return frontDeskMapper.queryClientById(clientId);
     }
+
 }

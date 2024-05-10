@@ -5,11 +5,13 @@ import com.shiyulu.pojo.*;
 import com.shiyulu.service.ClientService;
 import com.shiyulu.service.FrontDeskService;
 import com.shiyulu.service.VehicleFaultService;
+import com.shiyulu.utils.ThreadLocalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -109,6 +111,30 @@ public class FrontDeskController {
         log.info("分页查询所有车辆故障信息，参数为{},{},{},{},{},{}",page,pageSize,maintenanceType,taskClassification,paymentMethod,vin);
         PageBean pageBean = vehicleFaultService.listMaintenanceAttorney(page,pageSize,maintenanceType,taskClassification,paymentMethod,vin);
         return Result.success(pageBean);
+    }
+
+    @GetMapping("/queryVehicleByVfi")
+    public Result queryVehicleByVfi(Integer vfi) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userType = (Integer) map.get("usertype");
+        VehicleFault vehicleFault = vehicleFaultService.queryMaintenanceAttorneyByVfi(vfi);
+        if(vehicleFault == null) {
+            log.info("不存在的车辆故障号：{}！", vfi);
+            return Result.error("不存在的车辆故障信息！");
+        }
+        if(userType != 6) {
+            Vehicle vehicle = frontDeskService.queryCarByVin(vehicleFault.getVin());
+            return Result.success(vehicle);
+        }
+        else {
+            Integer clientId = (Integer) map.get("id");
+            if(!frontDeskService.checkCarBelong(vehicleFault.getVin(),clientId)) {
+                log.info("客户：{} 请求查询车辆故障号：{}对应的车辆信息，但客户与车辆的归属关系不存在",clientId,vfi);
+                return Result.error("该车辆与用户的归属关系不存在！");
+            }
+            Vehicle vehicle = frontDeskService.queryCarByVin(vehicleFault.getVin());
+            return Result.success(vehicle);
+        }
     }
 
 }

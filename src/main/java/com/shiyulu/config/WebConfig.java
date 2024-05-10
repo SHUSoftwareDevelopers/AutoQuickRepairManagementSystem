@@ -21,14 +21,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     }
 
-
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins("http://47.115.229.197", "http://localhost:5173") // 指定单个源
-//                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-//                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers") // 根据需要允许的头进行调整
-//                .allowCredentials(true);
-//    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://1.95.59.208", "http://localhost:5173") // 指定单个源
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers") // 根据需要允许的头进行调整
+                .allowCredentials(true);
+    }
 }
 
